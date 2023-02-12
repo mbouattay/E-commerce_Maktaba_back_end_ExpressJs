@@ -10,6 +10,8 @@ module.exports = (db, DataTypes) => {
     name : {type : DataTypes.STRING},
     prenom : {type : DataTypes.STRING},
     email_verifie : {type : DataTypes.STRING},
-    role : {type : DataTypes.STRING}
+    role : {type : DataTypes.STRING},
+    googleId: {type : DataTypes.STRING},
+    secret : {type : DataTypes.STRING}
   });
 }

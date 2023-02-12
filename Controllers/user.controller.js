@@ -72,6 +72,7 @@ const userController ={
                         user: datauser,
                         message :"verif your email now "
                     }) 
+                    
                 }
             })
         }catch(err){
