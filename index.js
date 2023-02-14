@@ -10,7 +10,8 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 app.use(passport.initialize());
 require("./config/googleAuth.config")(passport);
-const userRouter= require("./router/user.router")
+app.use(passport.initialize())
+require('./security/passport')(passport)
 app.use(
   session({
     secret: "secret",
@@ -18,7 +19,14 @@ app.use(
     saveUninitialized: false,
   })
 );
+const userRouter= require("./router/user.router")
+const clientRouter = require ("./router/client.router")
+const categorieRouter = require("./router/categorie.router")
+const produitRouter = require ("./router/produit.router")
 app.use("/user",userRouter)
+app.use("/client",clientRouter)
+app.use("/categorie", categorieRouter)
+app.use("/produit",produitRouter)
 db.authenticate().then(() => {
     console.log("Connection has been established successfully.")
   })

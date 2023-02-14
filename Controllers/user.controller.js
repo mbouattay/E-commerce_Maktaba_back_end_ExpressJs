@@ -87,7 +87,7 @@ const userController ={
         try{
             Model.user.findOne({where:{email:req.params.email}})
             .then(async(user)=>{
-                await Model.user.update({ email_verifie: "verifie" }, {
+                await Model.user.update({ email_verifie: "verifie" },{ 
                     where: {
                       email: req.params.email
                     }
