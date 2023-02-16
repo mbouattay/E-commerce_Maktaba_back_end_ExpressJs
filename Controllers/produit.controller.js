@@ -1,4 +1,5 @@
 const Model = require("../Models/index")
+const produit = require("../Models/produit")
 const produitController = {
     add : async (req,res)=>{
         try{
@@ -83,6 +84,24 @@ const produitController = {
                             produit: produit
                         })
                     }
+            })
+        }catch(err){
+            return res.status(400).json({
+                success:false,
+                error: err
+            })
+        }
+    },
+    findOne: async (req,res)=>{
+        try{
+            await Model.produit.findOne({where:{id:req.params.id}})
+            .then((produit)=>{
+                if(produit!==null){
+                    res.status(200).json({
+                        success:true,
+                        produit: produit
+                    })
+                }
             })
         }catch(err){
             return res.status(400).json({
