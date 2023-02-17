@@ -19,7 +19,7 @@ module.exports.sendEmailVerification = (email, link) => {
       html: `
       <div>
       <h1>verification Email</h1>
-      <a href="http://${link}"> click to verif your email</a>
+      <a href="${link}"> click to verif your email</a>
 
         </div>`,
     })

@@ -3,6 +3,7 @@ const Model = require ("../Models/index") ;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 const sendMail = require ('../config/Noemailer.config')
+let refreshTokens = [];
 const userController ={
         login : async (req,res)=>{
             try{
@@ -17,15 +18,23 @@ const userController ={
                             if(!isMatch){
                                 return res.status(404).json("password is not correct")
                             }else{
-                                var token = jwt.sign({
+                                var accessToken  = jwt.sign({
                                     id: User.id,
                                     name : User.name , 
                                     prnom : User.prenom,
                                     role : User.role
                                 }, process.env.PRIVATE_KEY, { expiresIn: '1h' }) ; 
+                                var refreshToken = jwt.sign({
+                                    id: User.id,
+                                    name : User.name , 
+                                    prnom : User.prenom,
+                                    role : User.role
+                                }, process.env.PRIVATE_KEY, { expiresIn: '30d' }) ;
+                                refreshTokens.push(refreshToken); 
                                 res.status(200).json({
                                     message: "success",
-                                    token:token
+                                    accessToken :accessToken,
+                                    refreshToken :refreshToken
                                 })
                             }
                         })
@@ -65,7 +74,7 @@ const userController ={
                     role : "client"
                     }
                     Model.user.create(datauser);
-                    let link =`localhost:3000/user/verif/${req.body.email}`; 
+                    let link =`http://localhost:3000/user/verif/${req.body.email}`; 
                     sendMail.sendEmailVerification(req.body.email,link); 
                     res.status(200).json({
                         success:true,
@@ -92,8 +101,37 @@ const userController ={
                       email: req.params.email
                     }
                   });
-                    res.redirect("http://localhost:3001/login")
+                  res.redirect("http://localhost:3001/login")
                })
+        }catch(err){
+            return res.status(400).json({
+                success:false,
+                error: err
+            })
+        }
+    },
+    refresh : async (req,res)=>{
+        try{
+            const refreshToken = req.body.refreshToken;
+            if (!refreshToken || !refreshTokens.includes(refreshToken)) {
+                return res.json({ message: "Refresh token not found" });
+            }
+            jwt.verify(refreshToken,process.env.PRIVATE_KEY, (err, User) => {
+                if (!err) {
+                    var accessToken  = jwt.sign({
+                        id: User.id,
+                        name : User.name , 
+                        prnom : User.prenom,
+                        role : User.role
+                    }, process.env.PRIVATE_KEY, { expiresIn: '1h' }) ; 
+                    return res.json({ success: true, accessToken });
+                } else {
+                    return res.json({
+                        success: false,
+                        message: "Invalid refresh token"
+                    });
+                }
+            });
         }catch(err){
             return res.status(400).json({
                 success:false,

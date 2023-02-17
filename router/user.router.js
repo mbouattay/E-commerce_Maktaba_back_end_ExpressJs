@@ -4,7 +4,7 @@ const passport = require("passport");
 const jwt = require('jsonwebtoken')
 const router = express.Router() ;
 router.post("/register",userController.register)
-router.put("/verif/:email",userController.emailVerification)
+router.get("/verif/:email",userController.emailVerification)
 router.post("/login",userController.login)
 router.get('/auth/google',passport.authenticate('google',{scope:[ 'email', 'profile' ]}))
 router.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: 'http://localhost:3001/login' }),
@@ -19,4 +19,5 @@ router.get('/auth/google/callback', passport.authenticate('google', { failureRed
     `http://localhost:3001/?token=${token}`
   ); 
   });
+router.post("/refresh",userController.refresh) 
 module.exports = router ;  
