@@ -19,5 +19,7 @@ router.get('/auth/google/callback', passport.authenticate('google', { failureRed
     `http://localhost:3001/?token=${token}`
   ); 
   });
-router.post("/refresh",userController.refresh) 
+router.post("/refresh",userController.refresh)
+router.post ("/sendForgotPassword", userController.sendMailforgotPassword)
+router.post ("/forgotpassword/:id/:token",userController.forgotpassword) 
 module.exports = router ;  

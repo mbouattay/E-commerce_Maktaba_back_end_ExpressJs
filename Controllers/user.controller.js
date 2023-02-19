@@ -138,6 +138,77 @@ const userController ={
                 error: err
             })
         }
+    },
+    sendMailforgotPassword : async (req,res)=>{
+        try{
+            Model.user.findOne({where:{email:req.body.email}}).then((olduser)=>{
+                if(olduser===null){
+                    return res.status(400).json({
+                        success : false ,
+                        message : " user not exist"
+                    })
+                }else{
+                    const secret = process.env.forget_key + olduser.password;
+                    const token = jwt.sign({ email: olduser.email, id: olduser.id }, secret, {
+                        expiresIn: "5m",
+                    });
+                    const link = `http://localhost:3001/reset-password/${olduser.id}/${token}`;
+                    sendMail.sendEmailToForgetPassword(req.body.email,link)
+                    res.status(200).json({
+                        success:true,
+                        message :"check your inbox now"
+                    })
+                }
+            })
+        }catch(err){
+            return res.status(400).json({
+                success:false,
+                error: err
+            })
+        }
+    },
+    forgotpassword : async (req,res)=>{
+        try{
+            const { id, token } = req.params;
+            const { password } = req.body;
+            Model.user.findOne({where:{id:id}}).then((olduser)=>{
+                if(olduser!==null){
+                    const secret = process.env.forget_key + olduser.password;
+                    jwt.verify(token,secret,async(err, User) => {
+                        if(!err){
+                            const newPassword = bcrypt.hashSync(password, 10);
+                           await Model.user.update({ password:newPassword },{ 
+                                where: {
+                                  id: id
+                                }
+                            })
+                            return res.status(200).json({
+                                success: true,
+                                message: " forgot password Done"
+                            });
+                        }else{
+                            return res.status(400).json({
+                                success: false,
+                                message: "Invalid refresh token"
+                            }); 
+                        }
+                    })
+
+                } else{
+                    return res.status(400).json({
+                        success: false,
+                        message: " user not exist"
+                    });
+                }
+            })
+            
+        }catch(err){
+            return res.status(400).json({
+                success:false,
+                error: err
+            })
+
+        }
     }
 }
 module.exports = userController ; 

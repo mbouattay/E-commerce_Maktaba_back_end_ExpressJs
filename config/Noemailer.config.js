@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
-const user = "mahmoudbouattay178@gmail.com"; // hedhi t7ot feha l email 
-const pass = "soyiabmwlaqkrlav"; // houni lazmek ta3mel generation lel code hedha gmail apps 
+const user = "mahmoudbouattay178@gmail.com"; 
+const pass = "soyiabmwlaqkrlav";  
 
 const transport = nodemailer.createTransport({
   service: "Gmail",
@@ -10,7 +10,6 @@ const transport = nodemailer.createTransport({
   },
 });
 module.exports.sendEmailVerification = (email, link) => {
-  // transport houwa jesr from chkoun to amal  html body message chnouwa f wostou
   transport
     .sendMail({
       from: 000,
@@ -25,3 +24,17 @@ module.exports.sendEmailVerification = (email, link) => {
     })
     .catch((err) => console.log(err));
 };
+module.exports.sendEmailToForgetPassword = (email , link )=>{
+  transport
+  .sendMail({
+    from: 000,
+    to: email,
+    subject: " Forget password Maktba.tn  ",
+    html: `
+    <div>
+    <h1> forget password </h1>
+    <a href="${link}"> click to  forget your password </a>
+    </div>`,
+  })
+  .catch((err) => console.log(err));
+}
