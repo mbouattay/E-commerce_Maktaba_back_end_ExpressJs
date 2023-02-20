@@ -20,16 +20,14 @@ const userController ={
                             }else{
                                 var accessToken  = jwt.sign({
                                     id: User.id,
-                                    name : User.name , 
-                                    prnom : User.prenom,
+                                    name_prenom : User.name_prenom , 
                                     role : User.role
                                 }, process.env.PRIVATE_KEY, { expiresIn: '1h' }) ; 
                                 var refreshToken = jwt.sign({
                                     id: User.id,
-                                    name : User.name , 
-                                    prnom : User.prenom,
+                                    name_prenom : User.name_prenom ,
                                     role : User.role
-                                }, process.env.PRIVATE_KEY, { expiresIn: '30d' }) ;
+                                }, process.env.REFRESH_KEY, { expiresIn: '30d' }) ;
                                 refreshTokens.push(refreshToken); 
                                 res.status(200).json({
                                     message: "success",
@@ -67,9 +65,7 @@ const userController ={
                    const datauser = {
                     email : req.body.email , 
                     password : passwordHash , 
-                    telephone : req.body.telephone,
-                    name : req.body.name , 
-                    prenom : req.body.prenom,
+                    name_prenom  : req.body.name_prenom , 
                     email_verifie : "non_verifie",
                     role : "client"
                     }
@@ -116,12 +112,11 @@ const userController ={
             if (!refreshToken || !refreshTokens.includes(refreshToken)) {
                 return res.json({ message: "Refresh token not found" });
             }
-            jwt.verify(refreshToken,process.env.PRIVATE_KEY, (err, User) => {
+            jwt.verify(refreshToken,process.env.REFRESH_KEY, (err, User) => {
                 if (!err) {
                     var accessToken  = jwt.sign({
                         id: User.id,
-                        name : User.name , 
-                        prnom : User.prenom,
+                        name_prenom : User.name_prenom ,
                         role : User.role
                     }, process.env.PRIVATE_KEY, { expiresIn: '1h' }) ; 
                     return res.json({ success: true, accessToken });

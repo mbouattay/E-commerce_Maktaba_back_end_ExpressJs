@@ -7,11 +7,10 @@ module.exports = (db, DataTypes) => {
     ville :{type : DataTypes.STRING  },
     point : {type : DataTypes.INTEGER  },
     telephone : {type : DataTypes.INTEGER },
-    name : {type : DataTypes.STRING},
-    prenom : {type : DataTypes.STRING},
+    name_prenom : {type : DataTypes.STRING},
     email_verifie : {type : DataTypes.STRING},
     role : {type : DataTypes.STRING},
     googleId: {type : DataTypes.STRING},
-    secret : {type : DataTypes.STRING}
+    facbookId: {type : DataTypes.STRING},
   });
 }

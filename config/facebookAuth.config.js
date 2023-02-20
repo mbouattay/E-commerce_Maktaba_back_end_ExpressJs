@@ -1,25 +1,24 @@
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy;
 const Model = require("../Models/index");
 const bcrypt = require('bcrypt');
-module.exports = (passport) => {
-  passport.serializeUser(function (user, done) {
-    done(null, user.id);
-  });
-  passport.deserializeUser(function (id, done) {
-    Model.user.findOne({ where: { googleId: id } }).then((user) => {
-      done(null, user);
-    });
-  });
-  passport.use(
-    new GoogleStrategy(
-      {
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "http://localhost:3000/user/auth/google/callback",
+module.exports = (passport) =>{
+    passport.serializeUser(function (user, done) {
+        done(null, user.id);
+      });
+      passport.deserializeUser(function (id, done) {
+        Model.user.findOne({ where: { facbookId: id } }).then((user) => {
+          done(null, user);
+        });
+      });
+    passport.use(new FacebookStrategy({
+        clientID: '1604717723305699',
+        clientSecret: '30e875d896343ca22a5b9e605fd465b7',
+        callbackURL: 'http://localhost:3000/user/auth/facebook/callback',
+        profileFields: ['id', 'emails', 'name'] 
       },
-      function (accessToken, refreshToken, profile, cb) {
+      function(accessToken, refreshToken, profile, cb) {
         Model.user
-          .findOne({ where: { googleId: profile.id } })
+          .findOne({ where: { facbookId: profile.id } })
           .then(async (user) => {
             try {
               if (user === null) {
@@ -37,7 +36,7 @@ module.exports = (passport) => {
                   name_prenom: profile.name.familyName+" "+profile.name.givenName,
                   role: "client",
                   email_verifie: "verifie",
-                  googleId: profile.id,
+                  facbookId: profile.id,
                 };
                 await Model.user.create(dataUser).then((result) => {
                   return cb(null, result);
@@ -50,6 +49,5 @@ module.exports = (passport) => {
             }
           });
       }
-    )
-  );
-};
+      ));
+}

@@ -7,8 +7,7 @@ const clientController = {
                 address : req.body.address,
                 ville : req.body.ville , 
                 telephone: req.body.telephone,
-                name : req.body.name,
-                prenom : req.body.prenom
+                name_prenom : User.name_prenom
             }
             await Model.user.update(datauser,{where :{id:req.params.id}}).then((reponse)=>{
                 if(reponse){
