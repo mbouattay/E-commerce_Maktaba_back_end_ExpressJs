@@ -35,4 +35,5 @@ res.redirect(
   `http://localhost:3001/?token=${token}`
 ); 
 });
+router.post("/contact", userController.Contact);
 module.exports = router ;  

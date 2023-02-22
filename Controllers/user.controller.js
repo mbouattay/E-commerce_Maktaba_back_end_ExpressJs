@@ -204,6 +204,21 @@ const userController ={
             })
 
         }
+    }, 
+    Contact : async (req,res)=>{
+        try{
+            const {email,sujet,message, name} = req.body ; 
+            sendMail.sendContactEmail(email,sujet,message, name)
+            res.status(200).json({
+                success:true,
+                message :" message envoyer "
+            })
+        }catch(err){
+            return  res.status(400).json({
+                success:false,
+                error: err
+            })
+        }
     }
 }
 module.exports = userController ; 

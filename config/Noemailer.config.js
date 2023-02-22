@@ -37,4 +37,13 @@ module.exports.sendEmailToForgetPassword = (email , link )=>{
     </div>`,
   })
   .catch((err) => console.log(err));
+};
+module.exports.sendContactEmail = (email,sujet,message, name)=>{
+    transport
+    .sendMail({
+      from : email,
+      to : "mahmoudbouattay178@gmail.com",
+      subject : `message from  ${name} : ${sujet} `,
+      text : message
+    }).catch((err)=>console.log(err))
 }
