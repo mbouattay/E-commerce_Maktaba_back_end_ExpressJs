@@ -17,9 +17,7 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-require("./config/googleAuth.config")(passport);
 require('./security/passport')(passport)
-require("./config/facebookAuth.config")(passport)
 /** les router */
 const userRouter= require("./router/user.router")
 const clientRouter = require ("./router/client.router")

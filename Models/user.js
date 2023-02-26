@@ -10,7 +10,5 @@ module.exports = (db, DataTypes) => {
     name_prenom : {type : DataTypes.STRING},
     email_verifie : {type : DataTypes.STRING},
     role : {type : DataTypes.STRING},
-    googleId: {type : DataTypes.STRING},
-    facbookId: {type : DataTypes.STRING},
   });
 }
