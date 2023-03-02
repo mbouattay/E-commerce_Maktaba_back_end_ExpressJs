@@ -1,27 +1,29 @@
-const { where } = require("sequelize");
 const Model = require("../Models/index");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../config/Noemailer.config");
-const { response } = require("express");
 let refreshTokens = [];
 const userController = {
   login: async (req, res) => {
     try {
-      Model.user.findOne({ where: { email: req.body.email } }).then((User) => {
+      Model.user.findOne({ where: { email: req.body.email } ,include : [{model : Model.client}] }).then((User) => {
         if (User === null) {
-          return res.status(404).json({err:"email is not correct"});
+          return res.status(404).json({
+            success: false,
+            err:"email is not correct"});
         } else {
           if (User.email_verifie === "verifie") {
             bcrypt.compare(req.body.password, User.password).then((isMatch) => {
               if (!isMatch) {
-                return res.status(404).json({err:"password is not correct"});
+                return res.status(404).json({
+                  success: false,
+                  err:"password is not correct"});
               } else {
                 var accessToken = jwt.sign(
                   {
                     id: User.id,
-                    name_prenom: User.name_prenom,
-                    role: User.role,
+                    fullname:User.clients[0].fullname,
+                    role : User.role
                   },
                   process.env.PRIVATE_KEY,
                   { expiresIn: "1h" }
@@ -29,14 +31,15 @@ const userController = {
                 var refreshToken = jwt.sign(
                   {
                     id: User.id,
-                    name_prenom: User.name_prenom,
-                    role: User.role,
+                    fullname:User.clients[0].fullname,
+                    role : User.role
                   },
                   process.env.REFRESH_KEY,
                   { expiresIn: "30d" }
                 );
                 refreshTokens.push(refreshToken);
                 res.status(200).json({
+                  success: true,
                   message: "success",
                   accessToken: accessToken,
                   refreshToken: refreshToken,
@@ -62,31 +65,35 @@ const userController = {
     try {
       Model.user.findOne({ where: { email: req.body.email } }).then((user) => {
         if (user !== null) {
-          return res.status(400).json({err:"email exist"});
+          return res.status(400).json({ 
+            success: false,
+            err:"email exist"
+          });
         } else {
           const passwordHash = bcrypt.hashSync(req.body.password, 10);
           const datauser = {
             email: req.body.email,
             password: passwordHash,
-            name_prenom: req.body.name_prenom,
             email_verifie: "non_verifie",
-            role: "client",
+            role : "client"
           };
           Model.user.create(datauser).then((user) => {
             if (user !== null) {
-              let link = `http://localhost:3000/user/verif/${req.body.email}`;
-              sendMail.sendEmailVerification(req.body.email, link);
-              res.status(200).json({
-                success: true,
-                user: datauser,
-                message: "verif your email now ",
-              });
-            } else {
-              res.status(400).json({
-                success: false,
-                error: "error lorsque la creation de user ",
-              });
-            }
+              const dataClient = {
+                fullname: req.body.fullname,
+                userId : user.id
+              }
+              Model.client.create(dataClient).then((client)=>{
+                if(client!==null){
+                  let link = `${process.env.URL_BACK}/user/verif/${req.body.email}`;
+                  sendMail.sendEmailVerification(req.body.email, link);
+                  res.status(200).json({
+                    success: true, 
+                    message: "verif your email now ",
+                  });
+                }
+              })
+            } 
           });
         }
       });
@@ -114,12 +121,8 @@ const userController = {
               )
               .then((response) => {
                 if (response != 0) {
-                  res.redirect("http://localhost:3001/login");
-                } else {
-                  res.status(404).json({
-                    error: " error  lorque la update ",
-                  });
-                }
+                  res.redirect(`${process.env.URL_FRONT}/login`);
+                } 
               });
           }
         });
@@ -134,15 +137,16 @@ const userController = {
     try {
       const refreshToken = req.body.refreshToken;
       if (!refreshToken || !refreshTokens.includes(refreshToken)) {
-        return res.json({ message: "Refresh token not found" });
+        return res.json({
+          success: false, 
+          error: "Refresh token not found"});
       }
       jwt.verify(refreshToken, process.env.REFRESH_KEY, (err, User) => {
         if (!err) {
           var accessToken = jwt.sign(
             {
               id: User.id,
-              name_prenom: User.name_prenom,
-              role: User.role,
+              fullname: User.fullname,
             },
             process.env.PRIVATE_KEY,
             { expiresIn: "1h" }
@@ -181,7 +185,7 @@ const userController = {
                 expiresIn: "5m",
               }
             );
-            const link = `http://localhost:3001/reset-password/${olduser.id}/${token}`;
+            const link = `${process.env.URL_FRONT}/reset-password/${olduser.id}/${token}`;
             sendMail.sendEmailToForgetPassword(req.body.email, link);
             res.status(200).json({
               success: true,
@@ -262,12 +266,12 @@ const userController = {
   authWithSocialMedia: async (req, res) => {
     try {
       const { email, name} = req.body;
-        Model.user.findOne({ where: { email: email } }).then((user) => {
+        Model.user.findOne({ where: { email: email } ,include : [{model : Model.client}] }).then((user) => {
           if (user !== null) {
             var accessToken = jwt.sign(
               {
                 id: user.id,
-                name_prenom: user.name_prenom,
+                fullname: user.fullname,
                 role: user.role,
               },
               process.env.PRIVATE_KEY,
@@ -276,7 +280,7 @@ const userController = {
             var refreshToken = jwt.sign(
               {
                 id: user.id,
-                name_prenom: user.name_prenom,
+                fullname: user.fullname,
                 role: user.role,
               },
               process.env.REFRESH_KEY,
@@ -284,6 +288,7 @@ const userController = {
             );
             refreshTokens.push(refreshToken);
             return res.status(200).json({
+              success: true,
               message: "success login",
               accessToken: accessToken,
               refreshToken: refreshToken,
@@ -300,36 +305,45 @@ const userController = {
             const datauser = {
               email: email,
               password: passwordHash,
-              name_prenom: name,
               email_verifie: "verifie",
               role: "client",
             };
             Model.user.create(datauser).then((user) => {
               if (user !== null) {
-                var accessToken = jwt.sign(
-                  {
-                    id: user.id,
-                    name_prenom: user.name_prenom,
-                    role: user.role,
-                  },
-                  process.env.PRIVATE_KEY,
-                  { expiresIn: "1h" }
-                );
-                var refreshToken = jwt.sign(
-                  {
-                    id: user.id,
-                    name_prenom: user.name_prenom,
-                    role: user.role,
-                  },
-                  process.env.REFRESH_KEY,
-                  { expiresIn: "30d" }
-                );
-                refreshTokens.push(refreshToken);
-                return res.status(200).json({
-                    message: "success create and login ",
-                    accessToken: accessToken,
-                    refreshToken: refreshToken,
-                  });
+                const dataClient = {
+                  fullname:name,
+                  userId : user.id
+                }
+                Model.client.create(dataClient).then((client)=>{
+                  if(client!==null){
+                    var accessToken = jwt.sign(
+                      {
+                        id: user.id,
+                        fullname:client.fullname,
+                        role: user.role,
+                      },
+                      process.env.PRIVATE_KEY,
+                      { expiresIn: "1h" }
+                    );
+                    var refreshToken = jwt.sign(
+                      {
+                        id: user.id,
+                        fullname:client.fullname,
+                        role: user.role,
+                      },
+                      process.env.REFRESH_KEY,
+                      { expiresIn: "30d" }
+                    );
+                    refreshTokens.push(refreshToken);
+                    return res.status(200).json({
+                        success: true,
+                        message: "success create and login ",
+                        accessToken: accessToken,
+                        refreshToken: refreshToken,
+                      });
+                    }
+                })
+                
               }
             });
           }
@@ -343,3 +357,4 @@ const userController = {
   },
 };
 module.exports = userController;
+

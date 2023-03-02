@@ -1,14 +1,15 @@
 const Model = require("../Models/index")
-const produit = require("../Models/produit")
 const produitController = {
     add : async (req,res)=>{
         try{
+            req.body["image"]=req.file.filename;
             const data = {
                 name : req.body.name , 
-                discription : req.body.discription,
+                description : req.body.description,
                 prix : req.body.prix , 
                 Qte : req.body.Qte , 
-                prix_G : req.body.prix_G , 
+                prix_G : req.body.prix_G ,
+                image : req.body.image, 
                 categorieId : req.body.categorieId , 
                 userId : req.body.userId
             }

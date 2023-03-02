@@ -39,6 +39,7 @@ const donsController = {
                     if(reponse){
                         res.status(200).json({
                             success:true,
+                            message : "update done"
                         }) 
                     }
               })
@@ -59,6 +60,7 @@ const donsController = {
                 if(reponse){
                     res.status(200).json({
                         success:true,
+                        message : " delete done"
                     }) 
                 }
               })

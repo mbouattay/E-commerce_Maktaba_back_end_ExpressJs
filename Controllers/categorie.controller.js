@@ -33,6 +33,7 @@ const categorieController = {
                     if(reponse){
                         res.status(200).json({
                             success:true,
+                            message : "update done"
                         }) 
                     }
               })
@@ -50,10 +51,10 @@ const categorieController = {
                   id: req.params.id
                 }
               }).then((reponse)=>{
-                if(reponse){
+                if(reponse !==0){
                     res.status(200).json({
                         success:true,
-                        categorie: reponse
+                        message : "delete done"
                     }) 
                 }
               })
