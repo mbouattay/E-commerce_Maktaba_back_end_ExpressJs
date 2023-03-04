@@ -1,0 +1,10 @@
+const codePromoController = require("../Controllers/codePromo.controller")
+const express = require ("express")
+const router =  express.Router() 
+router.post("/add", codePromoController.add) 
+router.delete("/delete/:id" , codePromoController.delete)
+router.get("/findAll",codePromoController.findAll) 
+router.get("/findOne/:id", codePromoController.findOne)
+router.get("/findByusers/:id" , codePromoController.findByuser)
+router.put("/update/:id" , codePromoController.update)
+module.exports = router

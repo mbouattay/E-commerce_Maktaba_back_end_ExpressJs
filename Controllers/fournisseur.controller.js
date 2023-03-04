@@ -1,7 +1,7 @@
 const Model = require("../Models/index")
 const bcrypt = require("bcrypt");
-const clientController = {
-    addClient : async (req, res)=>{
+const fournisseurController = {
+    addfournisseur : async (req, res)=>{
         try{
             const { email, name} = req.body;
                 const characters =
@@ -16,19 +16,19 @@ const clientController = {
                   email: email,
                   password: passwordHash,
                   email_verifie: "verifie",
-                  role: "client",
+                  role: "fournisseur",
                 };
                 Model.user.create(datauser).then((user) => {
                   if (user !== null) {
-                    const dataClient = {
+                    const datafournisseur = {
                       fullname:name,
                       userId : user.id
                     }
-                    Model.client.create(dataClient).then((client)=>{
-                      if(client!==null){
+                    Model.fournisseur.create(datafournisseur).then((fournisseur)=>{
+                      if(fournisseur!==null){
                         return res.status(200).json({
                             success: true,
-                            message: "success create client",
+                            message: "success create fournisseur",
                           });
                         }
                     })
@@ -43,4 +43,4 @@ const clientController = {
         
     }
 }
-module.exports=clientController
+module.exports=fournisseurController

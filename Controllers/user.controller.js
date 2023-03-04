@@ -2,15 +2,17 @@ const Model = require("../Models/index");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../config/Noemailer.config");
-let refreshTokens = [];
+const refreshTokens = [];
+const forgetpasswordToken = []
 const userController = {
   login: async (req, res) => {
     try {
-      Model.user.findOne({ where: { email: req.body.email } ,include : [{model : Model.client}] }).then((User) => {
+      Model.user.findOne({ where: { email: req.body.email }}).then((User) => {
         if (User === null) {
           return res.status(404).json({
             success: false,
-            err:"email is not correct"});
+            err:"email is not correct"}
+            );
         } else {
           if (User.email_verifie === "verifie") {
             bcrypt.compare(req.body.password, User.password).then((isMatch) => {
@@ -22,7 +24,7 @@ const userController = {
                 var accessToken = jwt.sign(
                   {
                     id: User.id,
-                    fullname:User.clients[0].fullname,
+                    fullname:User.fullname,
                     role : User.role
                   },
                   process.env.PRIVATE_KEY,
@@ -31,7 +33,7 @@ const userController = {
                 var refreshToken = jwt.sign(
                   {
                     id: User.id,
-                    fullname:User.clients[0].fullname,
+                    fullname:User.fullname,
                     role : User.role
                   },
                   process.env.REFRESH_KEY,
@@ -72,6 +74,7 @@ const userController = {
         } else {
           const passwordHash = bcrypt.hashSync(req.body.password, 10);
           const datauser = {
+            fullname : req.body.fullname,
             email: req.body.email,
             password: passwordHash,
             email_verifie: "non_verifie",
@@ -80,7 +83,6 @@ const userController = {
           Model.user.create(datauser).then((user) => {
             if (user !== null) {
               const dataClient = {
-                fullname: req.body.fullname,
                 userId : user.id
               }
               Model.client.create(dataClient).then((client)=>{
@@ -105,7 +107,7 @@ const userController = {
     }
   },
   emailVerification: async (req, res) => {
-    try {
+    try{
       Model.user
         .findOne({ where: { email: req.params.email } })
         .then(async (user) => {
@@ -185,6 +187,7 @@ const userController = {
                 expiresIn: "5m",
               }
             );
+            forgetpasswordToken.push(token)
             const link = `${process.env.URL_FRONT}/reset-password/${olduser.id}/${token}`;
             sendMail.sendEmailToForgetPassword(req.body.email, link);
             res.status(200).json({
@@ -202,8 +205,13 @@ const userController = {
   },
   forgotpassword: async (req, res) => {
     try {
-      const { id, token } = req.params;
-      const { password } = req.body;
+      const id= req.params.id;
+      const {password,token } = req.body;
+      if (!token ||!forgetpasswordToken.includes(token)) {
+        return res.status(400).json({
+          success: false, 
+          error: " token not found"});
+      }
       Model.user.findOne({ where: { id: id } }).then((olduser) => {
         if (olduser !== null) {
           const secret = process.env.forget_key + olduser.password;
@@ -265,8 +273,8 @@ const userController = {
   },
   authWithSocialMedia: async (req, res) => {
     try {
-      const { email, name} = req.body;
-        Model.user.findOne({ where: { email: email } ,include : [{model : Model.client}] }).then((user) => {
+        const { email, fullname} = req.body;
+        Model.user.findOne({ where: { email: email }}).then((user) => {
           if (user !== null) {
             var accessToken = jwt.sign(
               {
@@ -280,7 +288,7 @@ const userController = {
             var refreshToken = jwt.sign(
               {
                 id: user.id,
-                fullname: user.fullname,
+                fullname:user.fullname,
                 role: user.role,
               },
               process.env.REFRESH_KEY,
@@ -303,6 +311,7 @@ const userController = {
             }
             const passwordHash = bcrypt.hashSync(Password, 10);
             const datauser = {
+              fullname : fullname,
               email: email,
               password: passwordHash,
               email_verifie: "verifie",
@@ -311,7 +320,6 @@ const userController = {
             Model.user.create(datauser).then((user) => {
               if (user !== null) {
                 const dataClient = {
-                  fullname:name,
                   userId : user.id
                 }
                 Model.client.create(dataClient).then((client)=>{
@@ -319,7 +327,7 @@ const userController = {
                     var accessToken = jwt.sign(
                       {
                         id: user.id,
-                        fullname:client.fullname,
+                        fullname:fullname,
                         role: user.role,
                       },
                       process.env.PRIVATE_KEY,
@@ -328,7 +336,7 @@ const userController = {
                     var refreshToken = jwt.sign(
                       {
                         id: user.id,
-                        fullname:client.fullname,
+                        fullname:fullname,
                         role: user.role,
                       },
                       process.env.REFRESH_KEY,
