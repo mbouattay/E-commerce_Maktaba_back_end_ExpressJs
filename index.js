@@ -27,6 +27,8 @@ const labrairieRouter = require("./router/labriarie.router")
 const partenaireRouter = require("./router/partenaire.router")
 const fournisseurRouter = require("./router/fournisseur.router")
 const categorieRouter = require ("./router/categorie.router")
+const produitRouter = require ("./router/bonAchat.router")
+const produitLabrairieRouter = require ("./router/produitLabrairie.router")
 app.use("/user",userRouter)
 app.use("/client",clientRouter)
 app.use("/codePromo",codePromoRouter)
@@ -35,6 +37,8 @@ app.use("/labrairie",labrairieRouter)
 app.use("/partenaire",partenaireRouter)
 app.use("/fournisseur",fournisseurRouter)
 app.use("/categorie",categorieRouter)
+app.use("/produit",produitRouter)
+app.use("/produitLabrairie",produitLabrairieRouter)
 /** end  */
 /** connection avec DB */
 db.authenticate().then(() => {

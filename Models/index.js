@@ -9,6 +9,7 @@ const codePromoModel = require("./code_promo")
 const bonAchatModel = require("./bonAchat")
 const categorieModel = require("./categorie")
 const produitModel = require ("./produit")
+const produitlabrairieModel = require("./produitLabriarie")
 const user = userModel(db, Sequelize)
 const client =  clientModel (db,Sequelize)
 const fournisseur = fournisseurModel (db, Sequelize)
@@ -18,6 +19,7 @@ const codePromo = codePromoModel(db,Sequelize)
 const bonAchat = bonAchatModel(db,Sequelize)
 const categorie = categorieModel(db,Sequelize)
 const produit = produitModel(db,Sequelize)
+const produitlabrairie = produitlabrairieModel(db,Sequelize)
 // define relationships
 user.hasOne(client,{
   onDelete: 'CASCADE',
@@ -47,8 +49,13 @@ partenaire.hasMany(bonAchat)
 bonAchat.belongsTo(partenaire)
 categorie.hasMany(produit)
 produit.belongsTo(categorie)
-user.hasMany(produit)
-produit.belongsTo(user)
+fournisseur.hasMany(produit)
+produit.belongsTo(fournisseur)
+categorie.hasMany(produitlabrairie)
+produitlabrairie.belongsTo(categorie)
+labrairie.hasMany(produitlabrairie)
+produitlabrairie.belongsTo(labrairie)
+
 db.sync({force:true}).then(() => {
     console.log("Tables Created!")
 })
@@ -61,5 +68,6 @@ module.exports = {
     codePromo,
     bonAchat,
     categorie,
-    produit
+    produit,
+    produitlabrairie
 }

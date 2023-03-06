@@ -47,3 +47,18 @@ module.exports.sendContactEmail = (email,sujet,message, name)=>{
       text : message
     }).catch((err)=>console.log(err))
 }
+module.exports.acceptationDemendePartenariat = (email,password) => {
+  transport
+    .sendMail({
+      from: 000,
+      to: email,
+      subject: " acceptation demende  de partenariat ",
+      html: `
+      <div>
+      <h1> bienvenue chez maktba.tn </h1>
+      <p> votre  username :${email}<br/> password : ${password}</p>
+
+        </div>`,
+    })
+    .catch((err) => console.log(err));
+};

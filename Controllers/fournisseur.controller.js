@@ -1,5 +1,6 @@
 const Model = require("../Models/index")
 const bcrypt = require("bcrypt");
+const sendMail = require("../config/Noemailer.config");
 const fournisseurController = {
     addfournisseur : async (req, res)=>{
         try{
@@ -26,6 +27,7 @@ const fournisseurController = {
                     }
                     Model.fournisseur.create(datafournisseur).then((fournisseur)=>{
                       if(fournisseur!==null){
+                        sendMail.acceptationDemendePartenariat(email,Password)
                         return res.status(200).json({
                             success: true,
                             message: "success create fournisseur",

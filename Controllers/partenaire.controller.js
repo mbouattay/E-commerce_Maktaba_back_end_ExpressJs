@@ -1,5 +1,6 @@
 const Model = require("../Models/index")
 const bcrypt = require("bcrypt");
+const sendMail = require("../config/Noemailer.config");
 const partenaireController = {
     addpartenaire : async (req, res)=>{
         try{
@@ -27,6 +28,7 @@ const partenaireController = {
                     }
                     Model.partenaire.create(datapartenaire).then((partenaire)=>{
                       if(partenaire!==null){
+                        sendMail.acceptationDemendePartenariat(email,Password)
                         return res.status(200).json({
                             success: true,
                             message: "success create partenaire",

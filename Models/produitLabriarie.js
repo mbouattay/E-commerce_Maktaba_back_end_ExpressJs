@@ -1,11 +1,9 @@
 module.exports = (db, DataTypes) => {
-    return  db.define('produit',{
+    return  db.define('produitlabrairie',{
       id: { type: DataTypes.INTEGER,autoIncrement: true,primaryKey: true },
       description : {type : DataTypes.STRING},
       image:{type : DataTypes.STRING,allowNull: false},
-      prix : { type : DataTypes.FLOAT}, 
-      prix_en_gros : { type : DataTypes.FLOAT}, 
-      Qte:{ type : DataTypes.INTEGER},
-      etat : {type : DataTypes.STRING}  
+      prix : { type : DataTypes.FLOAT},
+      etat : {type : DataTypes.STRING}
     });
 }

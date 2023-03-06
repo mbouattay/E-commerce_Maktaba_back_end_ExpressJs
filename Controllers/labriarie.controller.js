@@ -1,5 +1,6 @@
 const Model = require("../Models/index")
 const bcrypt = require("bcrypt");
+const sendMail = require("../config/Noemailer.config");
 const LabriarieController = {
     addlabrairie : async (req, res)=>{
         try{
@@ -14,6 +15,7 @@ const LabriarieController = {
                 const passwordHash = bcrypt.hashSync(Password, 10);
                 const datauser = {
                   email: email,
+                  fullname:name,
                   password: passwordHash,
                   email_verifie: "verifie",
                   role: "labrairie",
@@ -21,10 +23,10 @@ const LabriarieController = {
                 Model.user.create(datauser).then((user) => {
                   if (user !== null) {
                     const dataLabriarie = {
-                      fullname:name,
                       userId : user.id
                     }
                     Model.labrairie.create(dataLabriarie).then((labrairie)=>{
+                      sendMail.acceptationDemendePartenariat(email,Password)
                       if(labrairie!==null){
                         return res.status(200).json({
                             success: true,

@@ -4,7 +4,7 @@ const produitController = {
   add: async (req, res) => {
     try {
       req.body["image"]=req.file.filename 
-      const { description, image, Qte, prix, fournisseurId,categorieId} = req.body;
+      const { description, image, Qte, prix, labrairieId,categorieId} = req.body;
       const produitData = {
         description: description,
         image: image,
@@ -12,9 +12,9 @@ const produitController = {
         Qte: Qte,
         etat: "en_cours",
         categorieId :categorieId,
-        fournisseurId: fournisseurId,
+        labrairieId: labrairieId,
       };
-      Model.produit.create(produitData).then((response) => {
+      Model.produitlabrairie.create(produitData).then((response) => {
         if (response !== null) {
           return res.status(200).json({
             success: true,
@@ -39,7 +39,7 @@ const produitController = {
             prix: prix,
             Qte: Qte,
         }
-        Model.produit.update(produitData,{where: {id: req.params.id}}).then((response)=>{
+        Model.produitlabrairie.update(produitData,{where: {id: req.params.id}}).then((response)=>{
             if (response!==0){
                 return res.status(200).json({
                     success: true,
@@ -83,7 +83,7 @@ const produitController = {
   },
   findAll : async (req , res)=>{
     try{
-        Model.produit.findAll().then((response)=>{
+        Model.produitlabrairie.findAll().then((response)=>{
             if(response!==null){
               res.status(200).json({
                 success:true,
@@ -103,9 +103,9 @@ const produitController = {
         });
     }
 },
-  findAllProduitByfournisseur : async (req, res)=>{
+  findAllProduitByLabrairie : async (req, res)=>{
     try{
-        Model.produit.findAll({ where: { fournisseurId: req.body.fournisseurId }}).then((response)=>{
+        Model.produit.findAll({ where: { labrairieId: req.body.labrairieId }}).then((response)=>{
           if(response!==null){
             res.status(200).json({
               success:true,
@@ -114,7 +114,7 @@ const produitController = {
           }else{
             res.status(400).json({
               success:false,
-              err : " fournisseur have zero produit"
+              err : " labrairieId have zero produit"
           }) 
           }
         })

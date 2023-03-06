@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const clientController = {
     addClient : async (req, res)=>{
         try{
-            const { email, name} = req.body;
+            const {email, name} = req.body;
                 const characters =
                   "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
                 let Password = "";
@@ -15,13 +15,14 @@ const clientController = {
                 const datauser = {
                   email: email,
                   password: passwordHash,
+                  fullname:name,
                   email_verifie: "verifie",
                   role: "client",
                 };
                 Model.user.create(datauser).then((user) => {
                   if (user !== null) {
                     const dataClient = {
-                      fullname:name,
+                     
                       userId : user.id
                     }
                     Model.client.create(dataClient).then((client)=>{
