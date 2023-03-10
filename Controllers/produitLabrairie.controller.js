@@ -3,9 +3,10 @@ const Model = require("../Models/index");
 const produitController = {
   add: async (req, res) => {
     try {
-      req.body["image"]=req.file.filename 
-      const { description, image, Qte, prix, labrairieId,categorieId} = req.body;
+      req.body["image"]=req.file.filename
+      const { titre,description, image, Qte, prix, labrairieId,categorieId} = req.body;
       const produitData = {
+        titre : titre ,
         description: description,
         image: image,
         prix: prix,
@@ -62,7 +63,7 @@ const produitController = {
   },
   delete : async (req,res)=>{
     try{
-        Model.produit.destroy({
+        Model.produitlabrairie.destroy({
             where: {
               id: req.params.id
             }
@@ -83,7 +84,7 @@ const produitController = {
   },
   findAll : async (req , res)=>{
     try{
-        Model.produitlabrairie.findAll().then((response)=>{
+        Model.produitlabrairie.findAll({include : [{model : Model.labrairie , include : [{ model : Model.user,attributes: ['fullname', 'avata'] }]}]}).then((response)=>{
             if(response!==null){
               res.status(200).json({
                 success:true,

@@ -4,7 +4,7 @@ const sendMail = require("../config/Noemailer.config");
 const LabriarieController = {
     addlabrairie : async (req, res)=>{
         try{
-            const { email, name} = req.body;
+            const { email, fullname} = req.body;
                 const characters =
                   "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
                 let Password = "";
@@ -15,7 +15,7 @@ const LabriarieController = {
                 const passwordHash = bcrypt.hashSync(Password, 10);
                 const datauser = {
                   email: email,
-                  fullname:name,
+                  fullname:fullname,
                   password: passwordHash,
                   email_verifie: "verifie",
                   role: "labrairie",
@@ -23,6 +23,7 @@ const LabriarieController = {
                 Model.user.create(datauser).then((user) => {
                   if (user !== null) {
                     const dataLabriarie = {
+                      id : user.id,
                       userId : user.id
                     }
                     Model.labrairie.create(dataLabriarie).then((labrairie)=>{

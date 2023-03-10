@@ -4,7 +4,7 @@ const sendMail = require("../config/Noemailer.config");
 const fournisseurController = {
     addfournisseur : async (req, res)=>{
         try{
-            const { email, name} = req.body;
+            const { email, fullname} = req.body;
                 const characters =
                   "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
                 let Password = "";
@@ -15,6 +15,7 @@ const fournisseurController = {
                 const passwordHash = bcrypt.hashSync(Password, 10);
                 const datauser = {
                   email: email,
+                  fullname:fullname,
                   password: passwordHash,
                   email_verifie: "verifie",
                   role: "fournisseur",
@@ -22,7 +23,7 @@ const fournisseurController = {
                 Model.user.create(datauser).then((user) => {
                   if (user !== null) {
                     const datafournisseur = {
-                      fullname:name,
+                      id : user.id,
                       userId : user.id
                     }
                     Model.fournisseur.create(datafournisseur).then((fournisseur)=>{

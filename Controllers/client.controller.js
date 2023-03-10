@@ -22,7 +22,7 @@ const clientController = {
                 Model.user.create(datauser).then((user) => {
                   if (user !== null) {
                     const dataClient = {
-                     
+                      id : user.id,
                       userId : user.id
                     }
                     Model.client.create(dataClient).then((client)=>{

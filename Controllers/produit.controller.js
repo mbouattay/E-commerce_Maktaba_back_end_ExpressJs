@@ -4,11 +4,14 @@ const produitController = {
   add: async (req, res) => {
     try {
       req.body["image"]=req.file.filename 
-      const { description, image, Qte, prix, fournisseurId,categorieId} = req.body;
+      const { description,titre ,image, Qte, prix,prix_en_gros,fournisseurId,categorieId} = req.body;
+      console.log(image)
       const produitData = {
+        titre  : titre ,
         description: description,
         image: image,
         prix: prix,
+        prix_en_gros :prix_en_gros,
         Qte: Qte,
         etat: "en_cours",
         categorieId :categorieId,
@@ -20,21 +23,27 @@ const produitController = {
             success: true,
             message: " produit created",
           });
+        }else{
+          return res.status(400).json({
+            success: true,
+            message: "  err creation produit",
+          });
         }
       });
     } catch (err) {
         return res.status(400).json({
             success: false,
-            error: err,
+            error: "aaa",
         });
     }
   },
   update : async (req,res)=>{
     try{
         req.body["image"]=req.file.filename
-        const { description, image, Qte, prix} = req.body;
+        const { description, image, Qte, prix,titre} = req.body;
         const produitData = {
             description: description,
+            titre : titre,
             image: image,
             prix: prix,
             Qte: Qte,
@@ -83,7 +92,7 @@ const produitController = {
   },
   findAll : async (req , res)=>{
     try{
-        Model.produit.findAll().then((response)=>{
+        Model.produit.findAll({include : [{model : Model.fournisseur , include:[{model : Model.user ,attributes: ['id', 'fullname','avatar']}]}]}).then((response)=>{
             if(response!==null){
               res.status(200).json({
                 success:true,
@@ -105,7 +114,7 @@ const produitController = {
 },
   findAllProduitByfournisseur : async (req, res)=>{
     try{
-        Model.produit.findAll({ where: { fournisseurId: req.body.fournisseurId }}).then((response)=>{
+        Model.produit.findAll({ where: { fournisseurId: req.params.id }}).then((response)=>{
           if(response!==null){
             res.status(200).json({
               success:true,

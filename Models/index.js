@@ -10,6 +10,10 @@ const bonAchatModel = require("./bonAchat")
 const categorieModel = require("./categorie")
 const produitModel = require ("./produit")
 const produitlabrairieModel = require("./produitLabriarie")
+const commandeEnGrosModel = require("./commandeGros")
+const ProduitCommandeEnGrosModel = require("./ProduitCommandeEnGros")
+const ProduitCommandeEnDetailModel = require ("./ProduitCommandeEnDetail")
+const commandeEnDetailModel = require ("./commandeDetail")
 const user = userModel(db, Sequelize)
 const client =  clientModel (db,Sequelize)
 const fournisseur = fournisseurModel (db, Sequelize)
@@ -20,6 +24,10 @@ const bonAchat = bonAchatModel(db,Sequelize)
 const categorie = categorieModel(db,Sequelize)
 const produit = produitModel(db,Sequelize)
 const produitlabrairie = produitlabrairieModel(db,Sequelize)
+const commandeEnGros = commandeEnGrosModel(db,Sequelize)
+const ProduitCommandeEnGros = ProduitCommandeEnGrosModel(db,Sequelize)
+const commandeEnDetail = commandeEnDetailModel(db,Sequelize)
+const ProduitCommandeEnDetail = ProduitCommandeEnDetailModel(db,Sequelize)
 // define relationships
 user.hasOne(client,{
   onDelete: 'CASCADE',
@@ -55,7 +63,18 @@ categorie.hasMany(produitlabrairie)
 produitlabrairie.belongsTo(categorie)
 labrairie.hasMany(produitlabrairie)
 produitlabrairie.belongsTo(labrairie)
-
+labrairie.hasMany(commandeEnGros)
+commandeEnGros.belongsTo(labrairie)
+fournisseur.hasMany(commandeEnGros)
+commandeEnGros.belongsTo(fournisseur)
+produit.belongsToMany(commandeEnGros, { through:ProduitCommandeEnGros});
+commandeEnGros.belongsToMany(produit, { through:ProduitCommandeEnGros});
+user.hasMany(commandeEnDetail);
+commandeEnDetail.belongsTo(user);
+labrairie.hasMany(commandeEnDetail)
+commandeEnDetail.belongsTo(labrairie)
+produitlabrairie.belongsToMany(commandeEnDetail , {through :ProduitCommandeEnDetail})
+commandeEnDetail.belongsToMany(produitlabrairie , {through :ProduitCommandeEnDetail})
 db.sync({force:true}).then(() => {
     console.log("Tables Created!")
 })
@@ -69,5 +88,9 @@ module.exports = {
     bonAchat,
     categorie,
     produit,
-    produitlabrairie
+    produitlabrairie,
+    commandeEnGros,
+    ProduitCommandeEnGros,
+    commandeEnDetail,
+    ProduitCommandeEnDetail,
 }
