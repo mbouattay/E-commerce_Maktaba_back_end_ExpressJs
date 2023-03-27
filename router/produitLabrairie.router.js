@@ -7,4 +7,5 @@ router.put ("/update/:id",upload.single("image"),ProduitLabrairieController.upda
 router.delete("/delete/:id",ProduitLabrairieController.delete) 
 router.get("/findAll",ProduitLabrairieController.findAll) 
 router.get("/findByFournisseur",ProduitLabrairieController.findAllProduitByLabrairie); 
+router.get("/findOneProduit/:id",ProduitLabrairieController.findOneProduit) ;
 module.exports=router

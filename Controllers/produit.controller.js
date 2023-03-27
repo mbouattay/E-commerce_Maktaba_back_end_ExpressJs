@@ -4,10 +4,9 @@ const produitController = {
   add: async (req, res) => {
     try {
       req.body["image"]=req.file.filename 
-      const { description,titre ,image, Qte, prix,prix_en_gros,fournisseurId,categorieId} = req.body;
-      console.log(image)
+      const { titre,description,image, Qte, prix,prix_en_gros,fournisseurId,categorieId} = req.body;
       const produitData = {
-        titre  : titre ,
+        titre: titre ,
         description: description,
         image: image,
         prix: prix,

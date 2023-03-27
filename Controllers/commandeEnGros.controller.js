@@ -2,29 +2,25 @@ const { response } = require("express")
 const Model = require("../Models/index")
 const commandeEnGrosController = {
     add : async (req,res)=>{
-            try {
-                const {total_ttc,produits,labrairieId,fournisseurId} = req.body
-                const commandeData = {
-                    total_ttc : total_ttc , 
-                    etat : "en cours", 
-                    labrairieId : labrairieId,
-                    fournisseurId : fournisseurId
+        try {
+            const {commande} = req.body ;
+            commande.map((data)=>{
+                let commandes={
+                    total_ttc : data.total_ttc , 
+                    etat : "en cours" ,
+                    fournisseurId : data.fournisseurId,
+                    labrairieId : data.labrairieId
                 }
-                Model.commandeEnGros.create(commandeData).then((response)=>{
-                    if(response !== null){
-                        produits.map((e)=>{
+                Model.commandeEnGros.create(commandes).then((response)=>{
+                    if(response!==null){
+                        data.produits.map((e)=>{
                             e.commandeEnGroId = response.id
                         })
-                        Model.ProduitCommandeEnGros.bulkCreate(produits).then((response)=>{
-                            if(response !==null){
-                                return res.status(200).json({
-                                    success : true , 
-                                    message :" add commande en gros Done !!"
-                                })
-                            }else{
+                        Model.ProduitCommandeEnGros.bulkCreate(data.produits).then((response)=>{
+                            if(response===null){
                                 return res.status(400).json({
-                                        success : false , 
-                                        message : " error lorsque l'ajoute d'une commande " 
+                                    success : false , 
+                                    message : " error lorsque l'ajoute de produit" 
                                 })
                             }
                         })
@@ -34,7 +30,13 @@ const commandeEnGrosController = {
                             message : " error lorsque l'ajoute d'une commande " 
                         })
                     }
+                    
                 })
+            })
+            return res.status(200).json({
+                success : true , 
+                message :" add commande en gros Done !!"
+            })
             }catch(err){
                 return res.status(400).json({
                     success:false,

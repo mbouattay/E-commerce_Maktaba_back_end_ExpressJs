@@ -75,7 +75,7 @@ labrairie.hasMany(commandeEnDetail)
 commandeEnDetail.belongsTo(labrairie)
 produitlabrairie.belongsToMany(commandeEnDetail , {through :ProduitCommandeEnDetail})
 commandeEnDetail.belongsToMany(produitlabrairie , {through :ProduitCommandeEnDetail})
-db.sync({force:true}).then(() => {
+db.sync({force:false}).then(() => {
     console.log("Tables Created!")
 })
 module.exports = {

@@ -69,7 +69,7 @@ const produitController = {
             }
           }).then((reponse)=>{
             if(reponse!==0){
-                res.status(200).json({
+              return  res.status(200).json({
                     success:true,
                     message : " produit deleted"
                 }) 
@@ -84,14 +84,14 @@ const produitController = {
   },
   findAll : async (req , res)=>{
     try{
-        Model.produitlabrairie.findAll({include : [{model : Model.labrairie , include : [{ model : Model.user,attributes: ['fullname', 'avata'] }]}]}).then((response)=>{
+        Model.produitlabrairie.findAll({include : [{model : Model.labrairie ,attributes: ['id', 'userId'] , include : [{ model : Model.user,attributes: ['fullname', 'avatar'] }]}]}).then((response)=>{
             if(response!==null){
-              res.status(200).json({
+             return res.status(200).json({
                 success:true,
                 produit : response
             }) 
             }else{
-              res.status(400).json({
+              return res.status(400).json({
                 success:false,
                 err : " zero produit"
               })
@@ -106,7 +106,7 @@ const produitController = {
 },
   findAllProduitByLabrairie : async (req, res)=>{
     try{
-        Model.produit.findAll({ where: { labrairieId: req.body.labrairieId }}).then((response)=>{
+        Model.produitlabrairie.findAll({ where: { labrairieId: req.body.labrairieId }}).then((response)=>{
           if(response!==null){
             res.status(200).json({
               success:true,
@@ -123,6 +123,29 @@ const produitController = {
       return res.status(400).json({
         success : false , 
         err : err
+      })
+    }
+  },
+  findOneProduit : async (req,res)=>{
+    try{
+        const {id} = req.params
+        Model.produitlabrairie.findAll({where : {id:id} ,include : [{model : Model.labrairie ,attributes: ['id', 'userId'] , include : [{ model : Model.user,attributes: ['fullname', 'avatar'] }]}]}).then((response)=>{
+          if(response!==null){
+           return res.status(200).json({
+              success:true,
+              produit : response
+          }) 
+          }else{
+           return res.status(400).json({
+              success:false,
+              err : " error produit ne exist pas "
+          }) 
+          }
+        })
+    }catch(err){
+      return res.status(400).json({
+        success : false , 
+        err : err 
       })
     }
   }
