@@ -46,7 +46,7 @@ const commandeDetailController = {
     },
     findCommandeByuser : async (req,res)=>{
         try{
-            Model.commandeEnDetail.findAll({where:{userId:req.params.id},include : [{model : Model.labrairie ,attributes: ['id', 'userId'] } ,{model : Model.produitlabrairie}]}).
+            Model.commandeEnDetail.findAll({where:{userId:req.params.id},include : [{model : Model.labrairie ,attributes: ['id'] , include:[{model:Model.user,attributes:['fullname']}]} ,{model : Model.produitlabrairie,attributes:['titre','description','image','prix']}]}).
             then((response)=>{
                 if(response!==null){
                     return res.status(200).json({
@@ -69,7 +69,7 @@ const commandeDetailController = {
     },
     findOneCommande : async (req,res)=>{
         try{
-            Model.commandeEnDetail.findAll({where:{id:req.params.id},include : [{model : Model.labrairie ,attributes: ['id', 'userId'] } ,{model : Model.produitlabrairie}]}).
+            Model.commandeEnDetail.findAll({where:{id:req.params.id},include : [{model : Model.labrairie ,attributes: ['id'],include:[{model:Model.user,attributes:['fullname']}] },{model : Model.produitlabrairie,attributes:['titre','description','image','prix']}]}).
             then((response)=>{
                 if(response!==null){
                     return res.status(200).json({

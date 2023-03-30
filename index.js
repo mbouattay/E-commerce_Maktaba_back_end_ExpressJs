@@ -31,6 +31,7 @@ const produitRouter = require ("./router/produit.router")
 const produitLabrairieRouter = require ("./router/produitLabrairie.router")
 const commandeEnGrosRouter = require("./router/commandeGros.router")
 const commandeEnDetail = require("./router/commandeDetail.router")
+const codeClient = require("./router/codeClient.router")
 app.use("/user",userRouter)
 app.use("/client",clientRouter)
 app.use("/codePromo",codePromoRouter)
@@ -43,7 +44,7 @@ app.use("/produit",produitRouter)
 app.use("/produitLabrairie",produitLabrairieRouter)
 app.use("/commandeengros",commandeEnGrosRouter)
 app.use("/commandeDetail",commandeEnDetail)
-
+app.use("/codeClinet",codeClient)
 /** end  */
 /** connection avec DB */
 db.authenticate().then(() => {

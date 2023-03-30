@@ -3,6 +3,5 @@ module.exports = (db, DataTypes) => {
       id: { type: DataTypes.INTEGER,autoIncrement: true,primaryKey: true },
       code : {type : DataTypes.STRING , allowNull: false},
       pourcentage : {type : DataTypes.INTEGER , allowNull: false} ,
-      nb_utilisation : {type : DataTypes.INTEGER},
     });
 }

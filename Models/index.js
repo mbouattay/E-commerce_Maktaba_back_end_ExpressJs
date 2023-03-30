@@ -14,6 +14,7 @@ const commandeEnGrosModel = require("./commandeGros")
 const ProduitCommandeEnGrosModel = require("./ProduitCommandeEnGros")
 const ProduitCommandeEnDetailModel = require ("./ProduitCommandeEnDetail")
 const commandeEnDetailModel = require ("./commandeDetail")
+const codeClientModel = require("./codeClient")
 const user = userModel(db, Sequelize)
 const client =  clientModel (db,Sequelize)
 const fournisseur = fournisseurModel (db, Sequelize)
@@ -28,6 +29,7 @@ const commandeEnGros = commandeEnGrosModel(db,Sequelize)
 const ProduitCommandeEnGros = ProduitCommandeEnGrosModel(db,Sequelize)
 const commandeEnDetail = commandeEnDetailModel(db,Sequelize)
 const ProduitCommandeEnDetail = ProduitCommandeEnDetailModel(db,Sequelize)
+const codeClient = codeClientModel(db,Sequelize)
 // define relationships
 user.hasOne(client,{
   onDelete: 'CASCADE',
@@ -49,8 +51,12 @@ user.hasOne(partenaire,{
   onUpdate:'CASCADE'
 })
 partenaire.belongsTo(user)
-user.hasMany(codePromo)
-codePromo.belongsTo(user)
+labrairie.hasMany(codePromo)
+codePromo.belongsTo(labrairie)
+partenaire.hasMany(codePromo)
+codePromo.belongsTo(partenaire)
+codePromo.belongsToMany(client,{ through:codeClient});
+client.belongsToMany(codePromo,{ through:codeClient});
 user.hasMany(bonAchat)
 bonAchat.belongsTo(user)
 partenaire.hasMany(bonAchat) 
@@ -93,4 +99,5 @@ module.exports = {
     ProduitCommandeEnGros,
     commandeEnDetail,
     ProduitCommandeEnDetail,
+    codeClient
 }

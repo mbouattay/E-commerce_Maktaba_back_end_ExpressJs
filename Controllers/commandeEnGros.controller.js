@@ -44,9 +44,9 @@ const commandeEnGrosController = {
                 })
             }
     },
-    findAll : async(req,res)=>{
+    findcommandeByLabriarie: async(req,res)=>{
         try{
-            Model.commandeEnGros.findAll({  include: [{model:Model.labrairie , include :[Model.user]}] }
+            Model.commandeEnGros.findAll({where :{labrairieId:req.params.id},include:[{model:Model.fournisseur,attributes:['id'],include:[{model:Model.user,attributes:['fullname']}]},{model : Model.produit,attributes:['titre','description','image','prix','prix_en_gros']}]}
             ).then((response)=>{
                 if(response!==null){
                     return res.status(200).json({

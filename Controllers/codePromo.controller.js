@@ -2,13 +2,13 @@ const Model = require("../Models/index");
 const codePromo = {
   add: async (req, res) => {
     try {
-      const { userName, pourcentage , Iduser } = req.body;
+      const { userName,pourcentage,labrairieId,partenaireId} = req.body;
       const code = Math.floor(Math.random() * 9000) + userName;
       let data = {
-        code: code,
+        code:code,
         pourcentage: pourcentage,
-        nb_utilisation: 0,
-        userId : Iduser
+        labrairieId:labrairieId,
+        partenaireId : partenaireId
       };
       Model.codePromo.create(data).then((response) => {
         if (response !== null) {
@@ -80,7 +80,7 @@ const codePromo = {
   },
   findOne: async (req, res) => {
     try {
-      Model.codePromo.findOne({ where: { id: req.params.id }}).then((response)=>{
+      Model.codePromo.findOne({ where: { id: req.params.id },include:[{model : Model.labrairie,attributes:['id'],include:[{model:Model.user,attributes:['fullname']}]},{model:Model.partenaire,attributes:['id'],include:[{model:Model.user , attributes:["fullname"]}]}]}).then((response)=>{
         if(response !==null){
           res.status(200).json({
             success:true,
@@ -111,26 +111,6 @@ const codePromo = {
         error: err,
       });
     }
-  },
-  findByuser: async (req, res) => {
-    try{
-      Model.codePromo.findAll({
-        where: {
-          userId: req.params.id
-        }}).then((response)=>{
-        if(response!==null){
-          res.status(200).json({
-            success:true,
-            codes : response
-        }) 
-        }
-      })
-    }catch(err){
-      return res.status(400).json({
-        success: false,
-        error: err,
-      });
-    }
-  },
+  }
 };
 module.exports = codePromo;
