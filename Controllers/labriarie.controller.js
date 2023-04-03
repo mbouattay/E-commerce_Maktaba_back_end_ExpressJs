@@ -1,6 +1,7 @@
 const Model = require("../Models/index")
 const bcrypt = require("bcrypt");
 const sendMail = require("../config/Noemailer.config");
+const { response } = require("express");
 const LabriarieController = {
     addlabrairie : async (req, res)=>{
         try{
@@ -44,6 +45,30 @@ const LabriarieController = {
             })
         }
         
+    },
+    findProfile : async (req,res)=>{
+      try{
+          Model.user.findOne({
+            where: { id: req.params.id },attributes:["fullname","avatar","email"],include:[{model : Model.labrairie,attributes:["id","address","telephone","ville"],include:[{model: Model.produitlabrairie}]}]
+          }).then((response)=>{
+            if(response!== null){
+              res.status(200).json({
+                success : true ,
+                profile : response
+              })
+            }else{
+              res.status(200).json({
+                success : false , 
+                message :"profile not find"
+              })
+            }
+          })
+      }catch(err){
+        return res.status(400).json({
+          success:false,
+          error: err
+        })
+      }
     }
 }
 module.exports=LabriarieController

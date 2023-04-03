@@ -4,6 +4,6 @@ const router =  express.Router()
 router.post("/add", codePromoController.add) 
 router.delete("/delete/:id" , codePromoController.delete)
 router.get("/findAll",codePromoController.findAll) 
-router.get("/findOne/:id", codePromoController.findOne)
+router.get("/findOne/:code", codePromoController.findOne)
 router.put("/update/:id" , codePromoController.update)
 module.exports = router

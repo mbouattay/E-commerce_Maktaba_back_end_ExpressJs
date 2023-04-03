@@ -2,6 +2,7 @@ const Model = require("../Models/index");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../config/Noemailer.config");
+const { response } = require("express");
 const refreshTokens = [];
 const forgetpasswordToken = []
 const userController = {
@@ -364,6 +365,34 @@ const userController = {
       });
     }
   },
+  updateAvatar : async (req,res)=>{
+    try{
+        req.body["avatar"]=req.file.filename
+        Model.user.update({ avatar: req.body.avatar },
+          {
+            where: {
+              id: req.params.id,
+            },
+          }).then((response)=>{
+          if (response!==0){
+            return res.status(200).json({
+                success: true,
+                message : " update done ! "
+              });
+        }else{
+            return res.status(400).json({
+                success: false,
+                error: "error update ",
+              });  
+        }
+        })
+    }catch(err){
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  }
 };
 module.exports = userController;
 

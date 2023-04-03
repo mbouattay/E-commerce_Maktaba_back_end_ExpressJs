@@ -2,7 +2,9 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const passport = require("passport");
 const session = require("express-session");
+var cors = require('cors') 
 const app = express()
+app.use(cors("*"))
 const db = require('./config/database') ;
 require('dotenv').config()
 const port = process.env.PORT 
@@ -17,6 +19,7 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+app.use('/uploads',express.static("uploads"))
 require('./security/passport')(passport)
 /** les router */
 const userRouter= require("./router/user.router")

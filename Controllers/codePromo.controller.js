@@ -80,11 +80,16 @@ const codePromo = {
   },
   findOne: async (req, res) => {
     try {
-      Model.codePromo.findOne({ where: { id: req.params.id },include:[{model : Model.labrairie,attributes:['id'],include:[{model:Model.user,attributes:['fullname']}]},{model:Model.partenaire,attributes:['id'],include:[{model:Model.user , attributes:["fullname"]}]}]}).then((response)=>{
+      Model.codePromo.findOne({ where: { code: req.params.code },include:[{model : Model.labrairie,attributes:['id'],include:[{model:Model.user,attributes:['fullname']}]},{model:Model.partenaire,attributes:['id'],include:[{model:Model.user , attributes:["fullname"]}]}]}).then((response)=>{
         if(response !==null){
           res.status(200).json({
             success:true,
             code : response
+        }) 
+        }else{
+          res.status(200).json({
+            success:false,
+            err :"code introuvable"
         }) 
         }
       })

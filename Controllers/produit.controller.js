@@ -3,7 +3,7 @@ const Model = require("../Models/index");
 const produitController = {
   add: async (req, res) => {
     try {
-      req.body["image"]=req.file.filename 
+      req.body["image"]=req.file.filename
       const { titre,description,image, Qte, prix,prix_en_gros,fournisseurId,categorieId} = req.body;
       const produitData = {
         titre: titre ,
