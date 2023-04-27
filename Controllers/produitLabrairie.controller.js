@@ -84,7 +84,7 @@ const produitController = {
   },
   findAll : async (req , res)=>{
     try{
-        Model.produitlabrairie.findAll({include : [{model : Model.labrairie ,attributes: ['id', 'userId'] , include : [{ model : Model.user,attributes: ['fullname', 'avatar'] }]}]}).then((response)=>{
+        Model.produitlabrairie.findAll({include : [{model : Model.labrairie,attributes:["avatar"],include:[{model:Model.user,attributes:["fullname"]}]},{model:Model.categorie}]}).then((response)=>{
             if(response!==null){
              return res.status(200).json({
                 success:true,
@@ -129,7 +129,10 @@ const produitController = {
   findOneProduit : async (req,res)=>{
     try{
         const {id} = req.params
-        Model.produitlabrairie.findAll({where : {id:id} ,include : [{model : Model.labrairie ,attributes: ['id', 'userId'] , include : [{ model : Model.user,attributes: ['fullname', 'avatar'] }]}]}).then((response)=>{
+        Model.produitlabrairie.findOne({where : {id:id} ,
+          include : [{model : Model.labrairie,attributes:["telephone","avatar","facebook","instagram"],
+                      include:[{model:Model.user,attributes:["fullname","email"],
+                      include:[Model.adresses]}]},{model:Model.avisProduitlibraire}]}).then((response)=>{
           if(response!==null){
            return res.status(200).json({
               success:true,

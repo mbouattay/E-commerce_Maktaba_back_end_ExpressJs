@@ -1,7 +1,6 @@
 const Model = require("../Models/index")
 const bcrypt = require("bcrypt");
 const sendMail = require("../config/Noemailer.config");
-const { response } = require("express");
 const LabriarieController = {
     addlabrairie : async (req, res)=>{
         try{
@@ -48,9 +47,7 @@ const LabriarieController = {
     },
     findProfile : async (req,res)=>{
       try{
-          Model.user.findOne({
-            where: { id: req.params.id },attributes:["fullname","avatar","email"],include:[{model : Model.labrairie,attributes:["id","address","telephone","ville"],include:[{model: Model.produitlabrairie}]}]
-          }).then((response)=>{
+          Model.labrairie.findOne({where :{id:req.params.id},include:[{model :Model.user,attributes:["fullname","email"],include:[{model:Model.adresses}]},{model:Model.produitlabrairie}]}).then((response=>{
             if(response!== null){
               res.status(200).json({
                 success : true ,
@@ -62,7 +59,46 @@ const LabriarieController = {
                 message :"profile not find"
               })
             }
+          }))
+      }catch(err){
+        return res.status(400).json({
+          success:false,
+          error: err
+        })
+      }
+    } ,
+    updateProfile : async(req,res)=>{
+      try{
+
+      const{address,ville,telephone,facebook,instagram}=req.body
+      const data={
+        address : address , 
+        ville : ville , 
+        telephone : telephone , 
+        facebook : facebook , 
+        instagram : instagram
+      }
+      Model.labrairie.update(
+        data,
+        {
+          where: {
+            id: req.params.id,
+          },
+        }
+      ).then((response)=>{
+          if(response !== null){
+            return res.status(200).json({
+                success : true , 
+                message : "update profile Done !! "
+            })
+          }else{
+            return res.status(200).json({
+              success : false , 
+              message : " error update profile  !! "
           })
+          }
+      })
+
       }catch(err){
         return res.status(400).json({
           success:false,
@@ -70,5 +106,6 @@ const LabriarieController = {
         })
       }
     }
+
 }
 module.exports=LabriarieController

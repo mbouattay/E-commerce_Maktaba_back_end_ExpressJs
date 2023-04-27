@@ -365,34 +365,42 @@ const userController = {
       });
     }
   },
-  updateAvatar : async (req,res)=>{
-    try{
-        req.body["avatar"]=req.file.filename
-        Model.user.update({ avatar: req.body.avatar },
-          {
-            where: {
-              id: req.params.id,
-            },
-          }).then((response)=>{
-          if (response!==0){
-            return res.status(200).json({
-                success: true,
-                message : " update done ! "
-              });
-        }else{
-            return res.status(400).json({
-                success: false,
-                error: "error update ",
-              });  
-        }
+  updatePassword : async (req,res) =>{
+      try{
+        const {newPassword,ActuelPassword} = req.body ; 
+        Model.user.findOne({where : {id:req.params.id},attributes:["password"] }).then((response) => {
+          bcrypt.compare(ActuelPassword, response.password).then((isMatch) => {
+            if(!isMatch){
+              return  res.status(200).json({
+                success : false , 
+                message : " ActuelPassword not equal to password"
+              })
+            }else{
+              const passwordHash = bcrypt.hashSync(newPassword, 10);
+              Model.user.update({password : passwordHash},{where :{id : req.params.id}}).then((response) => {
+                if(response!=0){
+                  return res.status(200).json({
+                    success : true , 
+                    message :" update Password done !! "
+                  })
+                }else{
+                  return res.status(200).json({
+                    success : false , 
+                    message : " err to update password " , 
+                  })
+                }
+            })
+            }
+          })
         })
-    }catch(err){
-      return res.status(400).json({
-        success: false,
-        error: err,
-      });
-    }
+      }catch(err){
+          return res.status(400).json({
+            success : false , 
+            err : err
+          })
+      }
   }
+  
 };
 module.exports = userController;
 
