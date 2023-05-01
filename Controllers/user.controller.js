@@ -26,7 +26,8 @@ const userController = {
                   {
                     id: User.id,
                     fullname:User.fullname,
-                    role : User.role
+                    role :User.role ,
+                    avatar :User.avatar
                   },
                   process.env.PRIVATE_KEY,
                   { expiresIn: "1h" }
@@ -35,7 +36,8 @@ const userController = {
                   {
                     id: User.id,
                     fullname:User.fullname,
-                    role : User.role
+                    role : User.role,
+                    avatar :User.avatar
                   },
                   process.env.REFRESH_KEY,
                   { expiresIn: "30d" }
@@ -283,6 +285,7 @@ const userController = {
                 id: user.id,
                 fullname: user.fullname,
                 role: user.role,
+                avatar :user.avatar
               },
               process.env.PRIVATE_KEY,
               { expiresIn: "1h" }
@@ -292,6 +295,7 @@ const userController = {
                 id: user.id,
                 fullname:user.fullname,
                 role: user.role,
+                avatar :user.avatar
               },
               process.env.REFRESH_KEY,
               { expiresIn: "30d" }
@@ -322,6 +326,7 @@ const userController = {
             Model.user.create(datauser).then((user) => {
               if (user !== null) {
                 const dataClient = {
+                  id: user.id,
                   userId : user.id
                 }
                 Model.client.create(dataClient).then((client)=>{
@@ -331,6 +336,7 @@ const userController = {
                         id: user.id,
                         fullname:fullname,
                         role: user.role,
+                      
                       },
                       process.env.PRIVATE_KEY,
                       { expiresIn: "1h" }
@@ -399,7 +405,40 @@ const userController = {
             err : err
           })
       }
-  }
+  },
+  updateIdentite: async (req, res) => {
+    try {
+      req.body["image"] = req.files[0].filename;
+      const { Date_de_naissance,image,telephone,fullname,email } = req.body;
+      const data = {
+        Date_de_naissance: Date_de_naissance,
+        avatar:image,
+        telephone: telephone,
+        fullname: fullname,
+        email: email,
+      };
+      Model.user
+        .update(data, { where: { id: req.params.id } })
+        .then((response) => {
+          if (response !== 0) {
+            return res.status(200).json({
+              success: true,
+              message: "update indentite Done !!! ",
+            });
+          } else {
+            return res.status(400).json({
+              success: false,
+              message: "error update identite",
+            });
+          }
+        });
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  },
   
 };
 module.exports = userController;

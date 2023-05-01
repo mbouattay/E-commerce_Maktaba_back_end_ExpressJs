@@ -4,6 +4,5 @@ module.exports = (db, DataTypes) => {
       address : {type : DataTypes.STRING },
       ville :{type : DataTypes.STRING},
       telephone : {type : DataTypes.INTEGER},
-      avatar :{type : DataTypes.STRING },
     });
 }

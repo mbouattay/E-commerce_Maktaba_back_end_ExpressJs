@@ -18,6 +18,8 @@ const codeClientModel = require("./codeClient")
 const avisProduitlibraireModel = require("./avisProduitlibraire")
 const signalerProduitlibraireModel = require ("./signalerProduitLibraire")
 const adressesModel = require("./adresses")
+const imageProduitLibrairieModel = require("./imageProduitLibrairie")
+const produitFavorieModel = require("./produitFavorie")
 const user = userModel(db, Sequelize)
 const client =  clientModel (db,Sequelize)
 const fournisseur = fournisseurModel (db, Sequelize)
@@ -36,6 +38,8 @@ const codeClient = codeClientModel(db,Sequelize)
 const avisProduitlibraire = avisProduitlibraireModel(db,Sequelize)
 const signalerProduitlibraire = signalerProduitlibraireModel(db,Sequelize)
 const adresses  = adressesModel (db,Sequelize);
+const imageProduitLibrairie = imageProduitLibrairieModel(db,Sequelize)
+const produitFavorie = produitFavorieModel(db,Sequelize)
 // define relationships
 user.hasOne(client,{
   onDelete: 'CASCADE',
@@ -93,8 +97,17 @@ produitlabrairie.hasMany(avisProduitlibraire)
 avisProduitlibraire.belongsTo(produitlabrairie)
 produitlabrairie.hasMany(signalerProduitlibraire)
 signalerProduitlibraire.belongsTo(produitlabrairie)
-user.hasMany(adresses)
-adresses.belongsTo(user)
+client.hasMany(adresses)
+adresses.belongsTo(client)
+produitlabrairie.hasMany(imageProduitLibrairie,{
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE'
+})
+imageProduitLibrairie.belongsTo(produitlabrairie)
+client.hasMany(produitFavorie)
+produitFavorie.belongsTo(client)
+produitlabrairie.hasMany(produitFavorie)
+produitFavorie.belongsTo(produitlabrairie)
 db.sync({force:false}).then(() => {
     console.log("Tables Created!")
 })
@@ -116,5 +129,7 @@ module.exports = {
     codeClient,
     avisProduitlibraire,
     signalerProduitlibraire,
-    adresses
+    adresses,
+    imageProduitLibrairie,
+    produitFavorie
 }

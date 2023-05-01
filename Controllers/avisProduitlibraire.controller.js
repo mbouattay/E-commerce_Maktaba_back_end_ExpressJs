@@ -1,36 +1,125 @@
-const Model = require("../Models/index")
+const { response } = require("express");
+const Model = require("../Models/index");
 const avisProduitlibraireController = {
-    add : async (req,res)=>{
-        try{
-            const {nbStart,commenter,clientId,produitlabrairieId} = req.body 
-            const data = {
-                nbStart : nbStart , 
-                commenter : commenter , 
-                clientId : clientId, 
-                produitlabrairieId : produitlabrairieId
-            }
-            Model.avisProduitlibraire.create(data).then((response) => {
-                if(response!==null){
-                    return res.status(200).json({
-                        success : true , 
-                        message : "avis created"
-                       }) 
-                }else{
-                    return res.status(200).json({
-                        success : true , 
-                        message : "err create avis"
-                       }) 
-                }
-                   
-            })
-        }catch(err){
-            return res.status(400).json({
-                success: false,
-                error: err,
-            });
+  add: async (req, res) => {
+    try {
+      const { nbStart, commenter, clientId, produitlabrairieId } = req.body;
+      const data = {
+        nbStart: nbStart,
+        commenter: commenter,
+        clientId: clientId,
+        produitlabrairieId: produitlabrairieId,
+      };
+      Model.avisProduitlibraire.create(data).then((response) => {
+        if (response !== null) {
+          return res.status(200).json({
+            success: true,
+            message: "avis created",
+          });
+        } else {
+          return res.status(200).json({
+            success: false,
+            message: "err create avis",
+          });
         }
-    },
-
-    
-}
-module.exports = avisProduitlibraireController
+      });
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  },
+  update: async (req, res) => {
+    try {
+      const {nbStart,commenter}=req.body;
+      const data = {
+        nbStart: nbStart,
+        commenter: commenter,
+      };
+      Model.avisProduitlibraire.update(data, {
+        where: { id: req.params.id, clientId: req.params.clientId },
+      }).then((response) => {
+        if (response !==0) {
+          return res.status(200).json({
+            success: true,
+            message: "update avis done",
+          });
+        } else {
+          return res.status(400).json({
+            success: false,
+            message: "err to update avis",
+          });
+        }
+      });
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  },
+  delete: async (req, res) => {
+    try {
+      Model.avisProduitlibraire
+        .destroy({
+          where: { id: req.params.id, clientId: req.params.clientId },
+        })
+        .then((response) => {
+          if (response != 0) {
+            return res.status(200).json({
+              success: true,
+              message: "delete avis  done !! ",
+            });
+          } else {
+            return res.status(400).json({
+              success: false,
+              meesage: "err to  delete your avis",
+            });
+          }
+        });
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  },
+  getAllAvisByClient: async (req, res) => {
+    try {
+      Model.avisProduitlibraire
+        .findAll({
+          where: { clientId: req.params.clientId },
+          attributes: {
+            exclude: [
+              "createdAt",
+              "updatedAt",
+              "clientId",
+              "produitlabrairieId",
+            ],
+          },
+          include: [
+            {
+              model: Model.produitlabrairie,
+              attributes: { exclude: ["createdAt", "updatedAt"] },
+              include:[{model:Model.imageProduitLibrairie ,attributes:["name_Image"]}]
+            },
+          ],
+        })
+        .then((response) => {
+          if (response !== null) {
+            return res.status(200).json({
+              success: true,
+              avis: response,
+            });
+          }
+        });
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  },
+};
+module.exports = avisProduitlibraireController;

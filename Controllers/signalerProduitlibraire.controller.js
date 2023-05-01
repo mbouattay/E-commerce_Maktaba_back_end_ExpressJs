@@ -2,7 +2,7 @@ const Model = require ("../Models/index")
 const signalerProduitlibraireController = {
     add : async (req, res)=>{
         try{
-            req.body[image] = req.file.filename
+            req.body["image"] = req.files[0].filename;
             const {fullnameUser,email,message,image,produitlabrairieId} = req.body
             const data = {
                 fullnameUser : fullnameUser , 
@@ -15,16 +15,16 @@ const signalerProduitlibraireController = {
                 if(response !== null){
                     return res.status(200).json({
                         success : true , 
-                        message : " signalerProduitlibraire created !!! "
+                        message : " signalerProduitlibraire Done !!! "
+                    })
+                }else{
+                    return res.status(400).json({
+                        success : false , 
+                        message : "  err to add  signale " , 
+                  
                     })
                 }
-            }).catch((err) => {
-                return res.status(200).json({
-                    success : false , 
-                    message : "  err creation signale " , 
-                    err : err
-                })
-            });
+            })
         }catch(err){
             return res.status(400).json({
                 success: false,

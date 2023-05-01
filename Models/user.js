@@ -6,6 +6,8 @@ module.exports = (db, DataTypes) => {
     email_verifie : {type : DataTypes.STRING , allowNull: false ,validate: { notEmpty: true}},
     role :{type : DataTypes.STRING , allowNull: false ,validate: { notEmpty: true}},
     fullname : {type : DataTypes.STRING},
-    point : {type : DataTypes.INTEGER },
+    avatar : {type :DataTypes.STRING},
+    Date_de_naissance : {type : DataTypes.DATE},
+    telephone : {type : DataTypes.INTEGER},
   });
 }

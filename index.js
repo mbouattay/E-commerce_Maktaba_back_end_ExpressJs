@@ -38,6 +38,7 @@ const codeClient = require("./router/codeClient.router")
 const avisProduitlibraire = require ("./router/avisProduitlibraire.router")
 const signalerProduitlibraire = require ("./router/signalerProduitlibraire.router")
 const adresses = require("./router/adresses.router")
+const produitFavorie= require("./router/produitFavorie.router")
 app.use("/user",userRouter)
 app.use("/client",clientRouter)
 app.use("/codePromo",codePromoRouter)
@@ -54,6 +55,7 @@ app.use("/codeClinet",codeClient)
 app.use("/avisProduitlibraire",avisProduitlibraire)
 app.use("/signalerProduitlibraire",signalerProduitlibraire)
 app.use("/adresses",adresses)
+app.use("/produitFavorie",produitFavorie)
 /** end  */
 /** connection avec DB */
 db.authenticate().then(() => {
