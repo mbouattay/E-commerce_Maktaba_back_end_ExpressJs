@@ -269,5 +269,12 @@ const produitController = {
       });
     }
   },
+  findProduitsBycategorie : async (req,res)=>{
+    try {
+
+    }catch(err){
+      
+    }
+  }
 };
 module.exports = produitController;

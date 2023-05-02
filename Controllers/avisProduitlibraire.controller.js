@@ -32,26 +32,28 @@ const avisProduitlibraireController = {
   },
   update: async (req, res) => {
     try {
-      const {nbStart,commenter}=req.body;
+      const { nbStart, commenter } = req.body;
       const data = {
         nbStart: nbStart,
         commenter: commenter,
       };
-      Model.avisProduitlibraire.update(data, {
-        where: { id: req.params.id, clientId: req.params.clientId },
-      }).then((response) => {
-        if (response !==0) {
-          return res.status(200).json({
-            success: true,
-            message: "update avis done",
-          });
-        } else {
-          return res.status(400).json({
-            success: false,
-            message: "err to update avis",
-          });
-        }
-      });
+      Model.avisProduitlibraire
+        .update(data, {
+          where: { id: req.params.id, clientId: req.params.clientId },
+        })
+        .then((response) => {
+          if (response !== 0) {
+            return res.status(200).json({
+              success: true,
+              message: "update avis done",
+            });
+          } else {
+            return res.status(400).json({
+              success: false,
+              message: "err to update avis",
+            });
+          }
+        });
     } catch (err) {
       return res.status(400).json({
         success: false,
@@ -102,7 +104,12 @@ const avisProduitlibraireController = {
             {
               model: Model.produitlabrairie,
               attributes: { exclude: ["createdAt", "updatedAt"] },
-              include:[{model:Model.imageProduitLibrairie ,attributes:["name_Image"]}]
+              include: [
+                {
+                  model: Model.imageProduitLibrairie,
+                  attributes: ["name_Image"],
+                },
+              ],
             },
           ],
         })
@@ -112,6 +119,34 @@ const avisProduitlibraireController = {
               success: true,
               avis: response,
             });
+          }
+        });
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  },
+  getAllAvisByproduit: async (req, res) => {
+    try {
+      Model.avisProduitlibraire
+        .findAll({
+          where: { produitlabrairieId: req.params.produitlabrairieId },
+          attributes:{exclude:["createdAt","updatedAt","clientId","produitlabrairieId"]},
+          include:[{model:Model.client ,attributes:["id"],include:[{model:Model.user ,attributes:["fullname","avatar"] }] }]
+        })
+        .then((response) => {
+          if(response.length!==0){
+            return res.status(200).json({
+              success: true,
+              avis:response
+            })
+          }else{
+            return res.status(400).json({
+              success : false , 
+              error: "No Avis for this produitlabrairie"
+            })
           }
         });
     } catch (err) {
