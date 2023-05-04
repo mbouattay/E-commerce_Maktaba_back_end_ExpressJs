@@ -226,7 +226,6 @@ const produitController = {
           where: { id: id },
           attributes: {
             exclude: ["createdAt", "updatedAt", "labrairieId"],
-          
           },
           include: [
             {
@@ -244,7 +243,6 @@ const produitController = {
                 [Sequelize.fn("max", Sequelize.col("nbStart")), "max_nb"],
                 [Sequelize.fn("SUM", Sequelize.col("nbStart")), "total_avis"],
               ],
-             
             },
           ],
           group: ["produitlabrairie.id"],
@@ -269,12 +267,60 @@ const produitController = {
       });
     }
   },
-  findProduitsBycategorie : async (req,res)=>{
+  findProduitsBycategorie: async (req, res) => {
     try {
-
-    }catch(err){
-      
+      Model.produitlabrairie
+        .findAll({
+          where: { categorieId: req.params.categorieId },
+          attributes: {
+            exclude: [
+              "createdAt",
+              "updatedAt",
+              "categorieId",
+              "labrairieId",
+              "description",
+            ],
+          },
+          include: [
+            {
+              model: Model.labrairie,
+              attributes: ["imageStore", "nameLibrairie"],
+            },
+            {
+              model: Model.imageProduitLibrairie,
+              attributes: ["name_Image"],
+              separate: true,
+            },
+            {
+              model: Model.avisProduitlibraire,
+              attributes: [
+                [Sequelize.fn("max", Sequelize.col("nbStart")), "max_nb"],
+                [Sequelize.fn("SUM", Sequelize.col("nbStart")), "total_avis"],
+              ],
+            },
+          ],
+          order: [["createdAt", "DESC"]],
+          group: ["produitlabrairie.id"],
+        })
+        .then((response) => {
+          if (response.length != 0) {
+            return res.status(200).json({
+              success: true,
+              produit: response,
+            });
+          } else {
+            return res.status(400).json({
+              success: false,
+              message: "zero produit  in this categorie",
+            });
+          }
+        });
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        err: err,
+      });
     }
-  }
+  },
 };
 module.exports = produitController;

@@ -8,4 +8,5 @@ router.delete("/delete/:id",ProduitLabrairieController.delete)
 router.get("/findAll",ProduitLabrairieController.findAll) 
 router.get("/findBylabrairie/:id",ProduitLabrairieController.findAllProduitByLabrairie); 
 router.get("/findOneProduit/:id",ProduitLabrairieController.findOneProduit);
+router.get("/findProduitsBycategorie/:categorieId",ProduitLabrairieController.findProduitsBycategorie);
 module.exports=router
