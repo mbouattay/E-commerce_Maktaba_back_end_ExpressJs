@@ -7,7 +7,7 @@ module.exports = (db, DataTypes) => {
     role :{type : DataTypes.STRING , allowNull: false ,validate: { notEmpty: true}},
     fullname : {type : DataTypes.STRING},
     avatar : {type :DataTypes.STRING},
-    Date_de_naissance : {type : DataTypes.DATE},
+    Date_de_naissance : {type : DataTypes.DATEONLY},
     telephone : {type : DataTypes.INTEGER},
   });
 }

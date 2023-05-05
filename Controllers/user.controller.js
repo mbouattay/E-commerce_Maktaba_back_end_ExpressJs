@@ -10,7 +10,7 @@ const userController = {
     try {
       Model.user.findOne({ where: { email: req.body.email }}).then((User) => {
         if (User === null) {
-          return res.status(404).json({
+          return res.status(400).json({
             success: false,
             err:"email is not correct"}
             );
@@ -18,7 +18,7 @@ const userController = {
           if (User.email_verifie === "verifie") {
             bcrypt.compare(req.body.password, User.password).then((isMatch) => {
               if (!isMatch) {
-                return res.status(404).json({
+                return res.status(400).json({
                   success: false,
                   err:"password is not correct"});
               } else {
@@ -52,7 +52,7 @@ const userController = {
               }
             });
           } else {
-            return res.status(404).json({
+            return res.status(400).json({
               success: false,
               message: "verifie your email",
             });

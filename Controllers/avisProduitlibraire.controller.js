@@ -133,7 +133,7 @@ const avisProduitlibraireController = {
       Model.avisProduitlibraire
         .findAll({
           where: { produitlabrairieId: req.params.produitlabrairieId },
-          attributes:{exclude:["createdAt","updatedAt","clientId","produitlabrairieId"]},
+          attributes:{exclude:["updatedAt","clientId","produitlabrairieId"]},
           include:[{model:Model.client ,attributes:["id"],include:[{model:Model.user ,attributes:["fullname","avatar"] }] }]
         })
         .then((response) => {
