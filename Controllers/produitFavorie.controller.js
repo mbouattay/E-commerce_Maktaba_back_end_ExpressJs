@@ -69,7 +69,11 @@ const produitFavorieController = {
               include: [
                 {
                   model: Model.labrairie,
-                  attributes: ["imageStore", "nameLibrairie"],
+                  attributes: ["id","imageStore", "nameLibrairie"],
+                },  {
+                  model: Model.imageProduitLibrairie,
+                  attributes: ["name_Image"],
+                  
                 },
                 {
                   model: Model.avisProduitlibraire,
