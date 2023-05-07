@@ -390,7 +390,7 @@ const userController = {
                     message :" update Password done !! "
                   })
                 }else{
-                  return res.status(200).json({
+                  return res.status(400).json({
                     success : false , 
                     message : " err to update password " , 
                   })
@@ -408,7 +408,12 @@ const userController = {
   },
   updateIdentite: async (req, res) => {
     try {
-      req.body["image"] = req.files[0].filename;
+      if(req.files.length!==0){
+        req.body["image"] = req.files[0].filename;
+      }else{
+        req.body["image"]==null
+      }
+      
       const { Date_de_naissance,image,telephone,fullname,email } = req.body;
       const data = {
         Date_de_naissance: Date_de_naissance,
