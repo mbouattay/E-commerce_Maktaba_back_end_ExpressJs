@@ -69,6 +69,7 @@ const commandeDetailController = {
                 "titre",
                 "prix"
               ],
+              include:[{model:Model.imageProduitLibrairie,attributes:["name_Image"]}]
             },
            
           ],

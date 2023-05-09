@@ -94,7 +94,6 @@ const avisProduitlibraireController = {
           where: { clientId: req.params.clientId },
           attributes: {
             exclude: [
-              "createdAt",
               "updatedAt",
               "clientId",
               "produitlabrairieId",
@@ -103,7 +102,7 @@ const avisProduitlibraireController = {
           include: [
             {
               model: Model.produitlabrairie,
-              attributes: { exclude: ["createdAt", "updatedAt"] },
+              attributes: ["id","titre"],
               include: [
                 {
                   model: Model.imageProduitLibrairie,
