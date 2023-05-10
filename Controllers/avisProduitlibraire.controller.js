@@ -39,7 +39,7 @@ const avisProduitlibraireController = {
       };
       Model.avisProduitlibraire
         .update(data, {
-          where: { id: req.params.id, clientId: req.params.clientId },
+          where: { id: req.params.id},
         })
         .then((response) => {
           if (response !== 0) {
@@ -65,10 +65,10 @@ const avisProduitlibraireController = {
     try {
       Model.avisProduitlibraire
         .destroy({
-          where: { id: req.params.id, clientId: req.params.clientId },
+          where: {id:req.params.id},
         })
         .then((response) => {
-          if (response != 0) {
+          if (response!=0) {
             return res.status(200).json({
               success: true,
               message: "delete avis  done !! ",
