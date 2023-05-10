@@ -52,26 +52,23 @@ const commandeDetailController = {
         .findAll({
           where: { userId: req.params.id },
           attributes: {
-            exclude: [
-              "updatedAt",
-              "userId",
-              "labrairieId"
-            ],
+            exclude: ["updatedAt", "userId", "labrairieId"],
           },
           include: [
             {
               model: Model.labrairie,
-              attributes:["id","nameLibrairie","imageStore"]
+              attributes: ["id", "nameLibrairie", "imageStore"],
             },
             {
               model: Model.produitlabrairie,
-             attributes: [  
-                "titre",
-                "prix"
+              attributes: ["titre", "prix"],
+              include: [
+                {
+                  model: Model.imageProduitLibrairie,
+                  attributes: ["name_Image"],
+                },
               ],
-              include:[{model:Model.imageProduitLibrairie,attributes:["name_Image"]}]
             },
-           
           ],
         })
         .then((response) => {
@@ -99,17 +96,26 @@ const commandeDetailController = {
       Model.commandeEnDetail
         .findAll({
           where: { id: req.params.id },
+          attributes: {
+            exclude: ["updatedAt", "userId", "labrairieId"],
+          },
           include: [
             {
-              model: Model.labrairie,
-              attributes: ["id"],
-              include: [{ model: Model.user, attributes: ["fullname"] }],
+              model: Model.produitlabrairie,
+              attributes: ["titre", "description", "prix"],
+              include: [
+                {
+                  model: Model.imageProduitLibrairie,
+                },
+              ],
             },
             {
-              model: Model.produitlabrairie,
-              attributes: ["titre", "description", "image", "prix"],
+              model: Model.user,
+              attributes: ["fullname", "avatar","telephone","email"],
+              include: [{ model: Model.client, attributes: ["id"] , include:[{model:Model.adresses}]}],
             },
           ],
+          order: [["createdAt", "ASC"]],
         })
         .then((response) => {
           if (response !== null) {
@@ -128,6 +134,45 @@ const commandeDetailController = {
       return res.status(400).json({
         success: false,
         err: err,
+      });
+    }
+  },
+  findCommandeBylibrairie: async (req, res) => {
+    try {
+      Model.commandeEnDetail
+        .findAll({
+          where: { labrairieId: req.params.labrairieId },
+          attributes: ["id", "total_ttc", "etat", "createdAt"],
+          include: [
+            { model: Model.user, attributes: ["fullname", "avatar"] },
+
+            {
+              model: Model.produitlabrairie,
+              attributes: [
+                [Sequelize.fn("COUNT", Sequelize.col("titre")), "nb_Article"],
+              ],
+            },
+          ],
+          group: ["commandeEnDetail.id"],
+          order: [["createdAt", "ASC"]],
+        })
+        .then((response) => {
+          if (response.length != 0) {
+            return res.status(200).json({
+              success: true,
+              commandes: response,
+            });
+          } else {
+            return res.status(400).json({
+              success: false,
+              err: "  zero commande trouve ",
+            });
+          }
+        });
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        error: err,
       });
     }
   },

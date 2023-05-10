@@ -4,6 +4,7 @@ module.exports = (db, DataTypes) => {
       fullnameUser : {type : DataTypes.STRING},
       email : {type : DataTypes.STRING},
       message : {type : DataTypes.STRING},
-      image : {type : DataTypes.STRING}
+      image : {type : DataTypes.STRING},
+      createdAt:{type : DataTypes.DATEONLY}
     });
 }

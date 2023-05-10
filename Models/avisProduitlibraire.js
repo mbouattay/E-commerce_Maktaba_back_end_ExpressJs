@@ -3,5 +3,6 @@ module.exports = (db, DataTypes) => {
       id: { type: DataTypes.INTEGER,autoIncrement: true,primaryKey: true },
       nbStart : {type : DataTypes.INTEGER},
       commenter:{type : DataTypes.STRING},
+      createdAt:{type : DataTypes.DATEONLY}
     });
 }
