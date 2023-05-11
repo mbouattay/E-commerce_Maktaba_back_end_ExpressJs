@@ -176,5 +176,35 @@ const commandeDetailController = {
       });
     }
   },
+  Annuler : async(req,res)=>{
+      try{
+
+      }catch(err){
+        return res.status(400).json({
+          success: false,
+          error: err,
+        });
+      }
+  },
+  Accepter: async(req,res)=>{
+    try{
+
+    }catch(err){
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  },
+  livre: async(req,res)=>{
+    try{
+
+    }catch(err){
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  }
 };
 module.exports = commandeDetailController;
