@@ -322,5 +322,18 @@ const produitController = {
       });
     }
   },
+  Liste_de_produits_librairie : async (req,res)=>{
+    try{
+      Model.produitlabrairie.findAll({
+        where : {labrairieId:req.params.id},
+        attributes:["id","titre","prix","updatedAt"]
+      }).then((response)=>{
+        
+      })
+
+    }catch(err){
+
+    }
+  }
 };
 module.exports = produitController;

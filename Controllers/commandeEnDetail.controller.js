@@ -177,18 +177,42 @@ const commandeDetailController = {
     }
   },
   Annuler : async(req,res)=>{
-      try{
-
-      }catch(err){
-        return res.status(400).json({
-          success: false,
-          error: err,
-        });
-      }
+    try{
+      Model.commandeEnDetail.update({Data_rejetée:new Date(),etat:"Annule"},{where:{id:req.params.id}}).then((response)=>{
+        if(response!==0){
+          return res.status(200).json({
+            success: true,
+            message: "commande Annuler" ,
+          });
+        }else{
+          return res.status(400).json({
+            success: false,
+            message: "error Annuler commande " ,
+          });
+        }
+      })
+    }catch(err){
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
   },
   Accepter: async(req,res)=>{
     try{
-
+      Model.commandeEnDetail.update({data_acceptation:new Date()},{where:{id:req.params.id}}).then((response)=>{
+        if(response!==0){
+          return res.status(200).json({
+            success: true,
+            message: "commande accepte" ,
+          });
+        }else{
+          return res.status(400).json({
+            success: false,
+            message: "error accepte commande " ,
+          });
+        }
+      })
     }catch(err){
       return res.status(400).json({
         success: false,
@@ -198,7 +222,19 @@ const commandeDetailController = {
   },
   livre: async(req,res)=>{
     try{
-
+      Model.commandeEnDetail.update({Date_préparée:new Date(),etat:"livre"},{where:{id:req.params.id}}).then((response)=>{
+        if(response!==0){
+          return res.status(200).json({
+            success: true,
+            message: "commande livre" ,
+          });
+        }else{
+          return res.status(400).json({
+            success: false,
+            message: "error livre commande " ,
+          });
+        }
+      })
     }catch(err){
       return res.status(400).json({
         success: false,

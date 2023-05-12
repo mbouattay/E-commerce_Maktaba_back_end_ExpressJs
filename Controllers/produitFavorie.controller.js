@@ -8,19 +8,29 @@ const produitFavorieController = {
         clientId: clientId,
         produitlabrairieId: produitlabrairieId,
       };
-      Model.produitFavorie.create(data).then((response) => {
-        if (response !== null) {
-          return res.status(200).json({
-            success: true,
-            message: " add produitFavorie Done",
-          });
-        } else {
-          return res.status(400).json({
-            success: false,
-            message: "  err  to add produit in list favorie",
-          });
-        }
-      });
+      Model.produitFavorie.findOne({where:{produitlabrairieId:produitlabrairieId}}).then((response)=>{
+          if(response!==null){
+            return res.status(400).json({
+              success: false,
+              message: " produit est deja dans la liste de produit favorie",
+            });
+          }else{
+            Model.produitFavorie.create(data).then((response) => {
+              if (response !== null) {
+                return res.status(200).json({
+                  success: true,
+                  message: " add produitFavorie Done",
+                });
+              } else {
+                return res.status(400).json({
+                  success: false,
+                  message: "  err  to add produit in list favorie",
+                });
+              }
+            });
+          }
+      })
+    
     } catch (err) {
       return res.status(400).json({
         success: false,
