@@ -5,14 +5,14 @@ const produitController = {
   add_produit_with_import_image: async (req, res) => {
     try {
       req.body["image"] = req.files;
-      const { titre, description, image, Qte, prix, labrairieId, categorieId } =
+      const { titre, description, image, qte, prix, labrairieId, categorieId } =
         req.body;
 
       const produitData = {
         titre: titre,
         description: description,
         prix: prix,
-        Qte: Qte,
+        qte: qte,
         etat: "en_cours",
         categorieId: categorieId,
         labrairieId: labrairieId,
@@ -326,13 +326,27 @@ const produitController = {
     try{
       Model.produitlabrairie.findAll({
         where : {labrairieId:req.params.id},
-        attributes:["id","titre","prix","updatedAt"]
+        attributes:["id","titre","prix","updatedAt","qte"],
+        include:[{model:Model.categorie,attributes:["id","name"]},{model:Model.imageProduitLibrairie ,attributes:["name_Image"]}]
       }).then((response)=>{
-        
+          if(response.length!==0){
+            return res.status(200).json({
+              success: true,
+              produit: response,
+            });
+          }else{
+            return res.status(400).json({
+              success: false,
+              message:" zero produit trouve",
+            });
+          }
       })
 
     }catch(err){
-
+      return res.status(400).json({
+        success: false,
+        err: err,
+      });
     }
   }
 };

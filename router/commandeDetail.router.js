@@ -8,4 +8,4 @@ router.get("/findCommandeBylibrairie/:labrairieId",commandeDetailController.find
 router.put("/Accepter/:id",commandeDetailController.Accepter)
 router.put("/Annuler/:id",commandeDetailController.Annuler)
 router.put("/livre/:id",commandeDetailController.livre)
-module.exports = router ;  
+module.exports = router;

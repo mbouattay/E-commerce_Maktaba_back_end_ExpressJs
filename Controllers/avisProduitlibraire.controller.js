@@ -1,5 +1,7 @@
 const { response } = require("express");
 const Model = require("../Models/index");
+const avisProduitlibraire = require("../Models/avisProduitlibraire");
+const { Sequelize } = require("sequelize");
 const avisProduitlibraireController = {
   add: async (req, res) => {
     try {
@@ -39,7 +41,7 @@ const avisProduitlibraireController = {
       };
       Model.avisProduitlibraire
         .update(data, {
-          where: { id: req.params.id},
+          where: { id: req.params.id },
         })
         .then((response) => {
           if (response !== 0) {
@@ -65,10 +67,10 @@ const avisProduitlibraireController = {
     try {
       Model.avisProduitlibraire
         .destroy({
-          where: {id:req.params.id},
+          where: { id: req.params.id },
         })
         .then((response) => {
-          if (response!=0) {
+          if (response != 0) {
             return res.status(200).json({
               success: true,
               message: "delete avis  done !! ",
@@ -93,16 +95,12 @@ const avisProduitlibraireController = {
         .findAll({
           where: { clientId: req.params.clientId },
           attributes: {
-            exclude: [
-              "updatedAt",
-              "clientId",
-              "produitlabrairieId",
-            ],
+            exclude: ["updatedAt", "clientId", "produitlabrairieId"],
           },
           include: [
             {
               model: Model.produitlabrairie,
-              attributes: ["id","titre"],
+              attributes: ["id", "titre"],
               include: [
                 {
                   model: Model.imageProduitLibrairie,
@@ -132,22 +130,64 @@ const avisProduitlibraireController = {
       Model.avisProduitlibraire
         .findAll({
           where: { produitlabrairieId: req.params.produitlabrairieId },
-          attributes:{exclude:["updatedAt","clientId","produitlabrairieId"]},
-          include:[{model:Model.client ,attributes:["id"],include:[{model:Model.user ,attributes:["fullname","avatar"] }] }]
+          attributes: {
+            exclude: ["updatedAt", "clientId", "produitlabrairieId"],
+          },
+          include: [
+            {
+              model: Model.client,
+              attributes: ["id"],
+              include: [
+                { model: Model.user, attributes: ["fullname", "avatar"] },
+              ],
+            },
+          ],
         })
         .then((response) => {
-          if(response.length!==0){
+          if (response.length !== 0) {
             return res.status(200).json({
               success: true,
-              avis:response
-            })
-          }else{
+              avis: response,
+            });
+          } else {
             return res.status(400).json({
-              success : false , 
-              error: "No Avis for this produitlabrairie"
-            })
+              success: false,
+              error: "No Avis for this produitlabrairie",
+            });
           }
         });
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  },
+  getAllavisBylibriarie: async (req, res) => {
+    try {
+      Model.avisProduitlibraire.findAll({
+        include: [
+          {
+            model: Model.produitlabrairie,
+            attributes:["titre"],
+            include:[{model:Model.imageProduitLibrairie ,attributes:["name_Image"]}],
+            where: { labrairieId:req.params.id} 
+          },
+          {
+            model:Model.client,
+            attributes:["id"],
+            include:[{model:Model.user, attributes:["fullname","avatar"]}]
+          }
+        ],
+      
+        attributes:["nbStart","commenter","createdAt"],
+        where: { '$produitlabrairie.id$': Sequelize.col('avisProduitlibraire.produitlabrairieId') }
+      }).then((resp)=>{
+        return res.status(200).json({
+          success: true,
+          avis: resp,
+        });
+      })
     } catch (err) {
       return res.status(400).json({
         success: false,
