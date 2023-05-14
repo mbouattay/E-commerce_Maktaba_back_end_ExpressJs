@@ -55,29 +55,39 @@ const produitController = {
   },
   update: async (req, res) => {
     try {
-      req.body["image"] = req.file.filename;
-      const { description, image, Qte, prix } = req.body;
+      const { titre, qte, prix, categorieId } = req.body;
       const produitData = {
-        description: description,
-        image: image,
+        titre: titre,
         prix: prix,
-        Qte: Qte,
+        qte: qte,
+        categorieId: categorieId,
       };
       Model.produitlabrairie
         .update(produitData, { where: { id: req.params.id } })
         .then((response) => {
           if (response !== 0) {
-            return res.status(200).json({
-              success: true,
-              message: " update done ! ",
-            });
-          } else {
-            return res.status(400).json({
-              success: false,
-              error: "error update ",
-            });
-          }
-        });
+            if (req.files.length !== 0) {
+              req.body["image"] = req.files[0].filename;
+              Model.imageProduitLibrairie
+                .update(
+                  { name_Image: req.body.image },
+                  { where: { produitlabrairieId: req.params.id } }
+                )
+                .then((response) => {
+                    if(response!==0){
+                      return res.status(200).json({
+                        success: true,
+                        message: " update done ! ",
+                      });
+                    }else{
+                      return res.status(400).json({
+                        success: false,
+                        error: "error update ",
+                      });
+                    }
+                });
+            }
+          }});
     } catch (err) {
       return res.status(400).json({
         success: false,
@@ -322,32 +332,36 @@ const produitController = {
       });
     }
   },
-  Liste_de_produits_librairie : async (req,res)=>{
-    try{
-      Model.produitlabrairie.findAll({
-        where : {labrairieId:req.params.id},
-        attributes:["id","titre","prix","updatedAt","qte"],
-        include:[{model:Model.categorie,attributes:["id","name"]},{model:Model.imageProduitLibrairie ,attributes:["name_Image"]}]
-      }).then((response)=>{
-          if(response.length!==0){
+  Liste_de_produits_librairie: async (req, res) => {
+    try {
+      Model.produitlabrairie
+        .findAll({
+          where: { labrairieId: req.params.id },
+          attributes: ["id", "titre", "prix", "updatedAt", "qte"],
+          include: [
+            { model: Model.categorie, attributes: ["id", "name"] },
+            { model: Model.imageProduitLibrairie, attributes: ["name_Image"] },
+          ],
+        })
+        .then((response) => {
+          if (response.length !== 0) {
             return res.status(200).json({
               success: true,
               produit: response,
             });
-          }else{
+          } else {
             return res.status(400).json({
               success: false,
-              message:" zero produit trouve",
+              message: " zero produit trouve",
             });
           }
-      })
-
-    }catch(err){
+        });
+    } catch (err) {
       return res.status(400).json({
         success: false,
         err: err,
       });
     }
-  }
+  },
 };
 module.exports = produitController;
