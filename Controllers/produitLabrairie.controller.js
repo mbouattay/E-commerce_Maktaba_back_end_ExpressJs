@@ -134,7 +134,6 @@ const produitController = {
         .findAll({
           attributes: {
             exclude: [
-              "createdAt",
               "updatedAt",
               "categorieId",
               "labrairieId",

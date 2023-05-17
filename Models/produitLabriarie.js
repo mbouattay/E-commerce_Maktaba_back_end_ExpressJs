@@ -7,8 +7,9 @@ module.exports = (db, DataTypes) => {
       etat : {type : DataTypes.STRING},
       qte:{type: DataTypes.INTEGER},
       prix_en_Solde:{type: DataTypes.INTEGER},
-      remise:{type: DataTypes.INTEGER},
-      updatedAt:{type : DataTypes.DATEONLY} , 
+      remise:{type: DataTypes.FLOAT},
+      updatedAt:{type : DataTypes.DATEONLY} ,
+      createdAt:{type : DataTypes.DATEONLY}, 
       refCataloge : {type : DataTypes.STRING}
     });
 }

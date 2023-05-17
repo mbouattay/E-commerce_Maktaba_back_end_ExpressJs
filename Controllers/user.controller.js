@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../config/Noemailer.config");
 const { response } = require("express");
+const { where } = require("sequelize");
 const refreshTokens = [];
 const forgetpasswordToken = []
 const userController = {
@@ -444,6 +445,35 @@ const userController = {
       });
     }
   },
+  addPoint : async (req,res)=>{
+    try{
+     Model.user.findByPk(req.params.id)
+      .then((user) => {
+        if (user) {
+          const updatedPoint = user.point + (req.body.point);
+          Model.user.update({ point: updatedPoint },{ where: { id:req.params.id } }).then((response)=>{
+            if(response!==0){
+              return res.status(200).json({
+                success: true,
+                message: "update point done !!",
+              });
+            }else{
+              return res.status(400).json({
+                success: false,
+                message: " error de update point",
+              });
+            }
+          })
+        }
+        
+      });
+    }catch(err){
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  }
   
 };
 module.exports = userController;

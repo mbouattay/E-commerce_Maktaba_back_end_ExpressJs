@@ -3,6 +3,7 @@ module.exports = (db, DataTypes) => {
       id: { type: DataTypes.INTEGER,autoIncrement: true,primaryKey: true },
       solde : {type : DataTypes.FLOAT , allowNull: false},
       etat:{type : DataTypes.STRING , allowNull: false},
+      code :{type : DataTypes.STRING},
       createdAt:{type : DataTypes.DATEONLY}
     });
 }
