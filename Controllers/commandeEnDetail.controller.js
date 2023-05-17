@@ -8,7 +8,8 @@ const commandeDetailController = {
       commande.map((data) => {
         let commandes = {
           total_ttc: data.total_ttc,
-          etat: "en cours",
+          etatClient: "en cours",
+          etatVender:"Nouveau",
           userId: data.userId,
           labrairieId: data.labrairieId,
         };
@@ -24,6 +25,24 @@ const commandeDetailController = {
                     success: false,
                     message: " error lorsque l'ajoute de produit",
                   });
+                } else {
+                  data.produits.map((e)=>{
+                    Model.produitlabrairie
+                    .findByPk(e.idprod)
+                    .then((produit) => {
+                      if (produit) {
+                        const updatedQte = produit.qte - (e.Qte);
+                        return Model.produitlabrairie.update({ qte: updatedQte },{ where: { id:e.idprod } });
+                      }else{
+                        return res.status(400).json({
+                          success: false,
+                          message: " error lorsque la modification de qte ",
+                        });
+                      }
+                      
+                    });
+                  })
+                 
                 }
               }
             );
@@ -111,8 +130,14 @@ const commandeDetailController = {
             },
             {
               model: Model.user,
-              attributes: ["fullname", "avatar","telephone","email"],
-              include: [{ model: Model.client, attributes: ["id"] , include:[{model:Model.adresses}]}],
+              attributes: ["fullname", "avatar", "telephone", "email"],
+              include: [
+                {
+                  model: Model.client,
+                  attributes: ["id"],
+                  include: [{ model: Model.adresses }],
+                },
+              ],
             },
           ],
           order: [["createdAt", "ASC"]],
@@ -176,71 +201,86 @@ const commandeDetailController = {
       });
     }
   },
-  Annuler : async(req,res)=>{
-    try{
-      Model.commandeEnDetail.update({Data_rejetée:new Date(),etat:"Annule"},{where:{id:req.params.id}}).then((response)=>{
-        if(response!==0){
-          return res.status(200).json({
-            success: true,
-            message: "commande Annuler" ,
-          });
-        }else{
-          return res.status(400).json({
-            success: false,
-            message: "error Annuler commande " ,
-          });
-        }
-      })
-    }catch(err){
+  Annuler: async (req, res) => {
+    try {
+      Model.commandeEnDetail
+        .update(
+          { Data_rejetée: new Date(), etatClient: "Annule" ,etatVender:"Rejeter" },
+          { where: { id: req.params.id } }
+        )
+        .then((response) => {
+          if (response !== 0) {
+            return res.status(200).json({
+              success: true,
+              message: "commande Annuler",
+            });
+          } else {
+            return res.status(400).json({
+              success: false,
+              message: "error Annuler commande ",
+            });
+          }
+        });
+    } catch (err) {
       return res.status(400).json({
         success: false,
         error: err,
       });
     }
   },
-  Accepter: async(req,res)=>{
-    try{
-      Model.commandeEnDetail.update({data_acceptation:new Date()},{where:{id:req.params.id}}).then((response)=>{
-        if(response!==0){
-          return res.status(200).json({
-            success: true,
-            message: "commande accepte" ,
-          });
-        }else{
-          return res.status(400).json({
-            success: false,
-            message: "error accepte commande " ,
-          });
-        }
-      })
-    }catch(err){
+  Accepter: async (req, res) => {
+    try {
+      Model.commandeEnDetail
+        .update(
+          { data_acceptation: new Date() ,etatVender:"En cours"},
+          { where: { id: req.params.id } }
+        )
+        .then((response) => {
+          if (response !== 0) {
+            return res.status(200).json({
+              success: true,
+              message: "commande accepte",
+            });
+          } else {
+            return res.status(400).json({
+              success: false,
+              message: "error accepte commande ",
+            });
+          }
+        });
+    } catch (err) {
       return res.status(400).json({
         success: false,
         error: err,
       });
     }
   },
-  livre: async(req,res)=>{
-    try{
-      Model.commandeEnDetail.update({Date_préparée:new Date(),etat:"livre"},{where:{id:req.params.id}}).then((response)=>{
-        if(response!==0){
-          return res.status(200).json({
-            success: true,
-            message: "commande livre" ,
-          });
-        }else{
-          return res.status(400).json({
-            success: false,
-            message: "error livre commande " ,
-          });
-        }
-      })
-    }catch(err){
+  livre: async (req, res) => {
+    try {
+      Model.commandeEnDetail
+        .update(
+          { Date_préparée: new Date(), etatClient: "livre" ,etatVender:"Compléter" },
+          { where: { id: req.params.id } }
+        )
+        .then((response) => {
+          if (response !== 0) {
+            return res.status(200).json({
+              success: true,
+              message: "commande livre",
+            });
+          } else {
+            return res.status(400).json({
+              success: false,
+              message: "error livre commande ",
+            });
+          }
+        });
+    } catch (err) {
       return res.status(400).json({
         success: false,
         error: err,
       });
     }
-  }
+  },
 };
 module.exports = commandeDetailController;

@@ -39,6 +39,8 @@ const avisProduitlibraire = require ("./router/avisProduitlibraire.router")
 const signalerProduitlibraire = require ("./router/signalerProduitlibraire.router")
 const adresses = require("./router/adresses.router")
 const produitFavorie= require("./router/produitFavorie.router")
+const adminRouter=require("./router/admin.router")
+const BecomePartner = require ("./router/becomePartner.router")
 app.use("/user",userRouter)
 app.use("/client",clientRouter)
 app.use("/codePromo",codePromoRouter)
@@ -56,6 +58,8 @@ app.use("/avisProduitlibraire",avisProduitlibraire)
 app.use("/signalerProduitlibraire",signalerProduitlibraire)
 app.use("/adresses",adresses)
 app.use("/produitFavorie",produitFavorie)
+app.use("/admin",adminRouter)
+app.use("/BecomePartner",BecomePartner)
 /** end  */
 /** connection avec DB */
 db.authenticate().then(() => {

@@ -13,7 +13,6 @@ const produitController = {
         description: description,
         prix: prix,
         qte: qte,
-        etat: "en_cours",
         categorieId: categorieId,
         labrairieId: labrairieId,
       };
@@ -55,11 +54,14 @@ const produitController = {
   },
   update: async (req, res) => {
     try {
-      const { titre, qte, prix, categorieId } = req.body;
+      const { titre,description,qte, prix,categorieId,prix_en_Solde,remise } = req.body;
       const produitData = {
         titre: titre,
+        description:description,
         prix: prix,
         qte: qte,
+        prix_en_Solde:prix_en_Solde,
+        remise:remise,
         categorieId: categorieId,
       };
       Model.produitlabrairie
@@ -86,8 +88,16 @@ const produitController = {
                       });
                     }
                 });
+            }else{
+              return res.status(200).json({
+                success: true,
+                message: "update done",
+              });
             }
-          }});
+            
+          }
+          
+        });
     } catch (err) {
       return res.status(400).json({
         success: false,

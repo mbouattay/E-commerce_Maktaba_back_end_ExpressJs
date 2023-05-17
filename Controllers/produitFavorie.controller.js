@@ -10,7 +10,7 @@ const produitFavorieController = {
       };
       Model.produitFavorie.findOne({where:{produitlabrairieId:produitlabrairieId}}).then((response)=>{
           if(response!==null){
-            return res.status(400).json({
+            return res.status(200).json({
               success: false,
               message: " produit est deja dans la liste de produit favorie",
             });

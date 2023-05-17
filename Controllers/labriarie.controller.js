@@ -6,7 +6,7 @@ const { response } = require("express");
 const LabriarieController = {
   addlabrairie: async (req, res) => {
     try {
-      const {email,fullname } = req.body;
+      const {email,fullname}=req.body;
       const characters =
         "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
       let Password = "";
