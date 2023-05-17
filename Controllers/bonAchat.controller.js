@@ -2,10 +2,11 @@ const Model = require ("../Models/index")
 const bonAchatController = {
     add : async (req , res)=>{
         try{
-            const {solde,etat,userId,partenaireId} = req.body
+            const {solde,etat,code,userId,partenaireId} = req.body
             const data = {
                 solde : solde , 
                 etat : etat , 
+                code:code ,
                 userId : userId , 
                 partenaireId : partenaireId 
             }
