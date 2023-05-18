@@ -20,30 +20,18 @@ const commandeDetailController = {
             });
             Model.ProduitCommandeEnDetail.bulkCreate(data.produits).then(
               (response) => {
-                if (response === null) {
-                  return res.status(400).json({
-                    success: false,
-                    message: " error lorsque l'ajoute de produit",
-                  });
-                } else {
+               
                   data.produits.map((e)=>{
                     Model.produitlabrairie
-                    .findByPk(e.idprod)
+                    .findByPk(e.produitlabrairieId)
                     .then((produit) => {
-                      if (produit) {
+                      if (produit!==null) {
                         const updatedQte = produit.qte - (e.Qte);
-                        return Model.produitlabrairie.update({ qte: updatedQte },{ where: { id:e.idprod } });
-                      }else{
-                        return res.status(400).json({
-                          success: false,
-                          message: " error lorsque la modification de qte ",
-                        });
+                        return Model.produitlabrairie.update({ qte: updatedQte },{ where: { id:e.produitlabrairieId } });
                       }
                       
                     });
-                  })
-                 
-                }
+                  }) 
               }
             );
           } else {
@@ -282,5 +270,45 @@ const commandeDetailController = {
       });
     }
   },
+  addArticle : async(req,res)=>{
+    try{
+      const {Qte,produitlabrairieId,commandeEnDetailId,prix}=req.body
+      const data={
+        Qte:Qte,
+        produitlabrairieId:produitlabrairieId, 
+        commandeEnDetailId:commandeEnDetailId,
+      }
+      Model.ProduitCommandeEnDetail.create(data).then((response)=>{
+        if (response !== null) {
+          Model.commandeEnDetail.findByPk(commandeEnDetailId).then((commande)=>{
+            const updateTotal = commande.total_ttc+(prix*Qte);
+            Model.commandeEnDetail.update({ total_ttc: updateTotal },{ where: { id:commandeEnDetailId } }).then((response)=>{
+              if(response !==null){
+                return res.status(200).json({
+                  success: true,
+                  message: "Article bien ajouter",
+                });      
+              }else{
+                return res.status(400).json({
+                  success: false,
+                  message: "error lorsque les changement de prix",
+                });
+              }
+            })
+          })
+        }else{
+          return res.status(400).json({
+            success: false,
+            message: "error  ajoute Article ou commande ",
+          });
+        }
+      })
+    }catch(err){
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  }
 };
 module.exports = commandeDetailController;

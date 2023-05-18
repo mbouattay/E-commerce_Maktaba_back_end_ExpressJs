@@ -8,4 +8,5 @@ router.get("/findCommandeBylibrairie/:labrairieId",commandeDetailController.find
 router.put("/Accepter/:id",commandeDetailController.Accepter)
 router.put("/Annuler/:id",commandeDetailController.Annuler)
 router.put("/livre/:id",commandeDetailController.livre)
+router.post("/addArticle",commandeDetailController.addArticle)
 module.exports = router;
