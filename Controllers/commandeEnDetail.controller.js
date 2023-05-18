@@ -155,7 +155,7 @@ const commandeDetailController = {
       Model.commandeEnDetail
         .findAll({
           where: { labrairieId: req.params.labrairieId },
-          attributes: ["id", "total_ttc", "etat", "createdAt"],
+          attributes: ["id", "total_ttc","etatVender" , "createdAt"],
           include: [
             { model: Model.user, attributes: ["fullname", "avatar"] },
 
