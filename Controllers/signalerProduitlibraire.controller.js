@@ -18,6 +18,7 @@ const signalerProduitlibraireController = {
                 image : image , 
                 produitlabrairieId : produitlabrairieId
             }
+            console.log(data)
             Model.signalerProduitlibraire.create(data).then((response) => {
                 if(response !== null){
                     return res.status(200).json({
