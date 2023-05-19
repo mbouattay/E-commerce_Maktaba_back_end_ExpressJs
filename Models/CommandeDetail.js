@@ -7,6 +7,9 @@ module.exports = (db, DataTypes) => {
       createdAt:{type : DataTypes.DATEONLY},
       data_acceptation:{type:DataTypes.DATEONLY},
       Data_rejetée:{type:DataTypes.DATEONLY},
-      Date_préparée:{type:DataTypes.DATEONLY}
+      Date_préparée:{type:DataTypes.DATEONLY},
+      Adresse :{type: DataTypes.INTEGER},
+      Mode_liv :{type : DataTypes.STRING},
+      Mode_pay :{type : DataTypes.STRING}
     });
 }

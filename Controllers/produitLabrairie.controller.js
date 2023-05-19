@@ -59,7 +59,7 @@ const produitController = {
         titre: titre,
         description:description,
         prix: prix,
-        qte: qte,
+        qte:qte,
         prix_en_Solde:prix_en_Solde,
         remise:remise,
         categorieId: categorieId,
@@ -106,11 +106,13 @@ const produitController = {
     }
   },
   delete: async (req, res) => {
+    const {ids}= req.body
+    console.log (ids)
     try {
       Model.produitlabrairie
         .destroy({
           where: {
-            id: req.params.id,
+            id:ids,
           },
         })
         .then((reponse) => {
@@ -372,5 +374,6 @@ const produitController = {
       });
     }
   },
+
 };
 module.exports = produitController;

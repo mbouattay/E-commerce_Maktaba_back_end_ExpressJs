@@ -1,6 +1,6 @@
 const { response } = require("express");
 const Model = require("../Models/index");
-const { Sequelize } = require("sequelize");
+const { Sequelize, where } = require("sequelize");
 const commandeDetailController = {
   add: async (req, res) => {
     try {
@@ -9,7 +9,10 @@ const commandeDetailController = {
         let commandes = {
           total_ttc: data.total_ttc,
           etatClient: "en cours",
-          etatVender:"Nouveau",
+          etatVender: "Nouveau",
+          Adresse:data.Adresse,
+          Mode_liv:data.Mode_liv,
+          Mode_pay:data.Mode_pay,
           userId: data.userId,
           labrairieId: data.labrairieId,
         };
@@ -20,18 +23,19 @@ const commandeDetailController = {
             });
             Model.ProduitCommandeEnDetail.bulkCreate(data.produits).then(
               (response) => {
-               
-                  data.produits.map((e)=>{
-                    Model.produitlabrairie
+                data.produits.map((e) => {
+                  Model.produitlabrairie
                     .findByPk(e.produitlabrairieId)
                     .then((produit) => {
-                      if (produit!==null) {
-                        const updatedQte = produit.qte - (e.Qte);
-                        return Model.produitlabrairie.update({ qte: updatedQte },{ where: { id:e.produitlabrairieId } });
+                      if (produit !== null) {
+                        const updatedQte = produit.qte - e.Qte;
+                        return Model.produitlabrairie.update(
+                          { qte: updatedQte },
+                          { where: { id: e.produitlabrairieId } }
+                        );
                       }
-                      
                     });
-                  }) 
+                });
               }
             );
           } else {
@@ -155,7 +159,7 @@ const commandeDetailController = {
       Model.commandeEnDetail
         .findAll({
           where: { labrairieId: req.params.labrairieId },
-          attributes: ["id", "total_ttc","etatVender" , "createdAt"],
+          attributes: ["id", "total_ttc", "etatVender", "createdAt"],
           include: [
             { model: Model.user, attributes: ["fullname", "avatar"] },
 
@@ -193,7 +197,11 @@ const commandeDetailController = {
     try {
       Model.commandeEnDetail
         .update(
-          { Data_rejetée: new Date(), etatClient: "Annule" ,etatVender:"Rejeter" },
+          {
+            Data_rejetée: new Date(),
+            etatClient: "Annule",
+            etatVender: "Rejeter",
+          },
           { where: { id: req.params.id } }
         )
         .then((response) => {
@@ -220,7 +228,7 @@ const commandeDetailController = {
     try {
       Model.commandeEnDetail
         .update(
-          { data_acceptation: new Date() ,etatVender:"En cours"},
+          { data_acceptation: new Date(), etatVender: "En cours" },
           { where: { id: req.params.id } }
         )
         .then((response) => {
@@ -247,7 +255,11 @@ const commandeDetailController = {
     try {
       Model.commandeEnDetail
         .update(
-          { Date_préparée: new Date(), etatClient: "livre" ,etatVender:"Compléter" },
+          {
+            Date_préparée: new Date(),
+            etatClient: "livre",
+            etatVender: "Compléter",
+          },
           { where: { id: req.params.id } }
         )
         .then((response) => {
@@ -270,45 +282,112 @@ const commandeDetailController = {
       });
     }
   },
-  addArticle : async(req,res)=>{
-    try{
-      const {Qte,produitlabrairieId,commandeEnDetailId,prix}=req.body
-      const data={
-        Qte:Qte,
-        produitlabrairieId:produitlabrairieId, 
-        commandeEnDetailId:commandeEnDetailId,
-      }
-      Model.ProduitCommandeEnDetail.create(data).then((response)=>{
+  addArticle: async (req, res) => {
+    try {
+      const { Qte, produitlabrairieId, commandeEnDetailId, prix } = req.body;
+      const data = {
+        Qte: Qte,
+        produitlabrairieId: produitlabrairieId,
+        commandeEnDetailId: commandeEnDetailId,
+      };
+      Model.ProduitCommandeEnDetail.findOne({
+        where: {
+          produitlabrairieId: produitlabrairieId,
+          commandeEnDetailId: commandeEnDetailId,
+        },
+      }).then((response) => {
         if (response !== null) {
-          Model.commandeEnDetail.findByPk(commandeEnDetailId).then((commande)=>{
-            const updateTotal = commande.total_ttc+(prix*Qte);
-            Model.commandeEnDetail.update({ total_ttc: updateTotal },{ where: { id:commandeEnDetailId } }).then((response)=>{
-              if(response !==null){
-                return res.status(200).json({
-                  success: true,
-                  message: "Article bien ajouter",
-                });      
-              }else{
-                return res.status(400).json({
-                  success: false,
-                  message: "error lorsque les changement de prix",
-                });
+          const newQte = (Number(response.Qte)+Number(Qte));
+          Model.commandeEnDetail
+            .findOne({ where: { id: commandeEnDetailId } })
+            .then((response) => {
+              if (response !== null) {
+                const newPrix = response.total_ttc + (Qte*prix);
+                Model.commandeEnDetail
+                  .update(
+                    { total_ttc: newPrix },
+                    { where: { id: commandeEnDetailId } }
+                  )
+                  .then((response) => {
+                    if (response !== 0) {
+                      Model.ProduitCommandeEnDetail.update(
+                        { Qte: newQte },
+                        {
+                          where: {
+                            produitlabrairieId: produitlabrairieId,
+                            commandeEnDetailId: commandeEnDetailId,
+                          },
+                        }
+                      ).then((response)=>{
+                        if(response!==0){
+                          return res.status(200).json({
+                            success: true,
+                            message: "prod add",
+                          });
+                        }
+                      })
+                    }
+                  });
               }
-            })
+            });
+        } else {
+          Model.ProduitCommandeEnDetail.create(data).then((response)=>{
+            if(response!==null){
+              Model.commandeEnDetail.findOne({where:{id:commandeEnDetailId}}).then((response)=>{
+                if(response!==null){
+                  const newTot =  Number(response.total_ttc)+ (prix*Qte)
+                  Model.commandeEnDetail.update({total_ttc:newTot},{where:{id:commandeEnDetailId}}).then((response)=>{
+                    if(response!==0){
+                      return res.status(200).json({
+                        success: true,
+                        message: "prod add",
+                      });
+                    }
+                  })
+                }
+              })
+            }else{
+              return res.status(400).json({
+                success: false,
+                message: "error to add prod",
+              });
+            }
           })
-        }else{
-          return res.status(400).json({
-            success: false,
-            message: "error  ajoute Article ou commande ",
-          });
         }
-      })
-    }catch(err){
+      });
+    } catch (err) {
       return res.status(400).json({
         success: false,
         error: err,
       });
     }
-  }
+  },
+  deleteArticle: async (req, res) => {
+    try {
+      Model.ProduitCommandeEnDetail.destroy({
+        where: {
+          produitlabrairieId: req.params.produitlabrairieId,
+          commandeEnDetailId: req.params.commandeEnDetailId,
+        },
+      }).then((response) => {
+        if (response !== 0) {
+          return res.status(200).json({
+            success: true,
+            message: " produit deleted",
+          });
+        } else {
+          return res.status(400).json({
+            success: false,
+            message: " error deleted",
+          });
+        }
+      });
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  },
 };
 module.exports = commandeDetailController;

@@ -9,4 +9,5 @@ router.put("/Accepter/:id",commandeDetailController.Accepter)
 router.put("/Annuler/:id",commandeDetailController.Annuler)
 router.put("/livre/:id",commandeDetailController.livre)
 router.post("/addArticle",commandeDetailController.addArticle)
+router.delete("/deleteArticle/:produitlabrairieId/:commandeEnDetailId",commandeDetailController.deleteArticle)
 module.exports = router;
