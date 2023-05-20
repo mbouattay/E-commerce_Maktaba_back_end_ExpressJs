@@ -72,7 +72,7 @@ const commandeDetailController = {
             },
             {
               model: Model.produitlabrairie,
-              attributes: ["titre", "prix"],
+              attributes: ["id","titre","prix"],
               include: [
                 {
                   model: Model.imageProduitLibrairie,
