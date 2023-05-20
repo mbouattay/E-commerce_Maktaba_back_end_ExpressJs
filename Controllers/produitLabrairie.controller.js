@@ -7,7 +7,6 @@ const produitController = {
       req.body["image"] = req.files;
       const { titre, description, image, qte, prix, labrairieId, categorieId } =
         req.body;
-
       const produitData = {
         titre: titre,
         description: description,

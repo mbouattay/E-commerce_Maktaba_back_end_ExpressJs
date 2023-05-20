@@ -9,6 +9,7 @@ module.exports = (db, DataTypes) => {
       file:{type :DataTypes.STRING},
       links:{type :DataTypes.STRING},
       detail:{type :DataTypes.STRING},
-      pack:{type :DataTypes.STRING}
+      pack:{type :DataTypes.STRING},
+      etat:{type :DataTypes.STRING}
     });
 }
