@@ -371,11 +371,22 @@ const commandeDetailController = {
         },
       }).then((response) => {
         if (response !== 0) {
+            Model.ProduitCommandeEnDetail.findAll({where:{commandeEnDetailId:req.params.commandeEnDetailId}}).then((response)=>{
+              if(response.length===0){
+                Model.commandeEnDetail.destroy({
+                  where :{id:req.params.commandeEnDetailId}
+                })
+              }
+            })
+            return res.status(200).json({
+              success: true,
+              message: " produit deleted",
+            });
+        } else {
           return res.status(200).json({
             success: true,
             message: " produit deleted",
           });
-        } else {
           return res.status(400).json({
             success: false,
             message: " error deleted",
