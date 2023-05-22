@@ -1,6 +1,7 @@
 const Model = require("../Models/index")
 const bcrypt = require("bcrypt");
 const sendMail = require("../config/Noemailer.config");
+const { response } = require("express");
 const partenaireController = {
     addpartenaire : async (req, res)=>{
         try{
@@ -44,6 +45,28 @@ const partenaireController = {
             })
         }
         
+    },
+    findPartnaire : async (req, res)=>{
+      try{
+          Model.partenaire.findAll({attributes: ["id"],include : [{model:Model.user , attributes:["fullname"]}]}).then((response)=>{
+              if(response!==null){
+                return res.status(200).json({
+                  success:true , 
+                  partainer : response
+                })
+              }else{
+                res.status(400).json({
+                  success : false , 
+                  message : "zero partainer"
+                })
+              }
+          })
+      }catch(err){
+        return res.status(400).json({
+          success:false,
+          error: err
+      })
+      }
     }
 }
 module.exports=partenaireController

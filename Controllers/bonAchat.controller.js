@@ -2,22 +2,49 @@ const Model = require ("../Models/index")
 const bonAchatController = {
     add : async (req , res)=>{
         try{
-            const {solde,etat,code,userId,partenaireId} = req.body
+            const {solde,userId,partenaireId,nbpoint} = req.body
+            console.log(nbpoint,userId)
+            function generateRandomCode() {
+                let code = "#";
+                
+                // Génère les 7 premiers chiffres aléatoires
+                for (let i = 0; i < 7; i++) {
+                  const randomDigit = Math.floor(Math.random() * 10);
+                  code += randomDigit;
+                }
+                
+                // Génère les 2 derniers chiffres aléatoires
+                for (let i = 0; i < 2; i++) {
+                  const randomDigit = Math.floor(Math.random() * 10);
+                  code += randomDigit;
+                }
+                
+                return code;
+              }
             const data = {
                 solde : solde , 
-                etat : etat , 
-                code:code ,
-                userId : userId , 
+                etat : "Valide" , 
+                code:generateRandomCode() ,
+                userId :userId , 
                 partenaireId : partenaireId 
             }
             Model.bonAchat.create(data).then((response)=>{
                 if(response!==null){
-                    return res.status(200).json({
-                        success: true,
-                        message: " bon d'Achat created",
-                        bonAchat: response
-                      });
+                    Model.user.findByPk(userId)
+                    .then((user) => {
+                      if (user) {
+                        const updatedPoint = Number(user.point)-(Number(nbpoint));
+                        console.log(updatedPoint)
+                        Model.user.update({ point: updatedPoint },{ where: { id:userId } })
+                      }
+                    }); 
                 }
+                return res.status(200).json({
+                    success: true,
+                    message: " bon d'Achat created",
+                    bonAchat: response,
+                    nbpoint : nbpoint,
+                  });
             })
         }catch(err){
             return res.status(400).json({
