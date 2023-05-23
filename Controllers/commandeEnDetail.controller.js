@@ -29,6 +29,9 @@ const commandeDetailController = {
                     .then((produit) => {
                       if (produit !== null) {
                         const updatedQte = produit.qte - e.Qte;
+                        if(updatedQte<0){
+                           updatedQte = 0
+                        }
                         return Model.produitlabrairie.update(
                           { qte: updatedQte },
                           { where: { id: e.produitlabrairieId } }
