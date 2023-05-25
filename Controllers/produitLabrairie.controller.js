@@ -54,10 +54,14 @@ const produitController = {
   update: async (req, res) => {
     try {
       const { titre,description,qte, prix,categorieId,prix_en_Solde,remise } = req.body;
+      if(prix_en_Solde!==undefined){
+        var etat ="remise"
+      }
       const produitData = {
         titre: titre,
         description:description,
         prix: prix,
+        etat:etat,
         qte:qte,
         prix_en_Solde:prix_en_Solde,
         remise:remise,
