@@ -377,6 +377,28 @@ const produitController = {
       });
     }
   },
+  produit_mieux_notes : async(req,res)=>{
+    try{
+      Model.produitlabrairie.findAll({
+        attributes: ['id', 'titre'],
+        include:[{model:Model.avisProduitlibraire,attributes: [[Sequelize.fn('SUM', Sequelize.col('nbStart')), 'total_stars']]}],
+        group: ['produitlabrairie.id', 'produitlabrairie.titre'],
+        having: Sequelize.literal('SUM(nbStart) >24')
+      }).then((response)=>{
+        if(response!== null){
+          return res.status(200).json({
+              success:true,
+              produit:response,    
+          })
+        }
+      })
+    }catch(err){
+      return res.status(400).json({
+        success: false,
+        err: err,
+      });
+    }
+  }
 
 };
 module.exports = produitController;

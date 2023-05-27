@@ -1,6 +1,6 @@
 const { response } = require("express");
 const Model = require("../Models/index");
-const { Sequelize, where } = require("sequelize");
+const { Sequelize, where, Op } = require("sequelize");
 const commandeDetailController = {
   add: async (req, res) => {
     try {
@@ -10,9 +10,9 @@ const commandeDetailController = {
           total_ttc: data.total_ttc,
           etatClient: "en cours",
           etatVender: "Nouveau",
-          Adresse:data.Adresse,
-          Mode_liv:data.Mode_liv,
-          Mode_pay:data.Mode_pay,
+          Adresse: data.Adresse,
+          Mode_liv: data.Mode_liv,
+          Mode_pay: data.Mode_pay,
           userId: data.userId,
           labrairieId: data.labrairieId,
         };
@@ -29,8 +29,8 @@ const commandeDetailController = {
                     .then((produit) => {
                       if (produit !== null) {
                         const updatedQte = produit.qte - e.Qte;
-                        if(updatedQte<0){
-                           updatedQte = 0
+                        if (updatedQte < 0) {
+                          updatedQte = 0;
                         }
                         return Model.produitlabrairie.update(
                           { qte: updatedQte },
@@ -75,7 +75,7 @@ const commandeDetailController = {
             },
             {
               model: Model.produitlabrairie,
-              attributes: ["id","titre","prix"],
+              attributes: ["id", "titre", "prix"],
               include: [
                 {
                   model: Model.imageProduitLibrairie,
@@ -300,12 +300,12 @@ const commandeDetailController = {
         },
       }).then((response) => {
         if (response !== null) {
-          const newQte = (Number(response.Qte)+Number(Qte));
+          const newQte = Number(response.Qte) + Number(Qte);
           Model.commandeEnDetail
             .findOne({ where: { id: commandeEnDetailId } })
             .then((response) => {
               if (response !== null) {
-                const newPrix = response.total_ttc + (Qte*prix);
+                const newPrix = response.total_ttc + Qte * prix;
                 Model.commandeEnDetail
                   .update(
                     { total_ttc: newPrix },
@@ -321,41 +321,48 @@ const commandeDetailController = {
                             commandeEnDetailId: commandeEnDetailId,
                           },
                         }
-                      ).then((response)=>{
-                        if(response!==0){
+                      ).then((response) => {
+                        if (response !== 0) {
                           return res.status(200).json({
                             success: true,
                             message: "prod add",
                           });
                         }
-                      })
+                      });
                     }
                   });
               }
             });
         } else {
-          Model.ProduitCommandeEnDetail.create(data).then((response)=>{
-            if(response!==null){
-              Model.commandeEnDetail.findOne({where:{id:commandeEnDetailId}}).then((response)=>{
-                if(response!==null){
-                  const newTot =  Number(response.total_ttc)+ (prix*Qte)
-                  Model.commandeEnDetail.update({total_ttc:newTot},{where:{id:commandeEnDetailId}}).then((response)=>{
-                    if(response!==0){
-                      return res.status(200).json({
-                        success: true,
-                        message: "prod add",
+          Model.ProduitCommandeEnDetail.create(data).then((response) => {
+            if (response !== null) {
+              Model.commandeEnDetail
+                .findOne({ where: { id: commandeEnDetailId } })
+                .then((response) => {
+                  if (response !== null) {
+                    const newTot = Number(response.total_ttc) + prix * Qte;
+                    Model.commandeEnDetail
+                      .update(
+                        { total_ttc: newTot },
+                        { where: { id: commandeEnDetailId } }
+                      )
+                      .then((response) => {
+                        if (response !== 0) {
+                          return res.status(200).json({
+                            success: true,
+                            message: "prod add",
+                          });
+                        }
                       });
-                    }
-                  })
-                }
-              })
-            }else{
+                  }
+                });
+            } else {
               return res.status(400).json({
                 success: false,
                 message: "error to add prod",
               });
             }
-          })
+          });
         }
       });
     } catch (err) {
@@ -374,17 +381,19 @@ const commandeDetailController = {
         },
       }).then((response) => {
         if (response !== 0) {
-            Model.ProduitCommandeEnDetail.findAll({where:{commandeEnDetailId:req.params.commandeEnDetailId}}).then((response)=>{
-              if(response.length===0){
-                Model.commandeEnDetail.destroy({
-                  where :{id:req.params.commandeEnDetailId}
-                })
-              }
-            })
-            return res.status(200).json({
-              success: true,
-              message: " produit deleted",
-            });
+          Model.ProduitCommandeEnDetail.findAll({
+            where: { commandeEnDetailId: req.params.commandeEnDetailId },
+          }).then((response) => {
+            if (response.length === 0) {
+              Model.commandeEnDetail.destroy({
+                where: { id: req.params.commandeEnDetailId },
+              });
+            }
+          });
+          return res.status(200).json({
+            success: true,
+            message: " produit deleted",
+          });
         } else {
           return res.status(200).json({
             success: true,
@@ -396,6 +405,90 @@ const commandeDetailController = {
           });
         }
       });
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  },
+  nb_commande_par_jour: async (req, res) => {
+    try {
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      Model.commandeEnDetail
+        .findAll({
+          attributes: [
+            "createdAt",
+            [
+              Sequelize.fn("COUNT", Sequelize.col("commandeEnDetail.id")),
+              "nombre_commandes",
+            ],
+          ],
+          where: {
+            createdAt: {
+              [Op.gte]: sevenDaysAgo,
+            },
+            labrairieId: req.params.id,
+          },
+          group: ["createdAt"],
+          raw: true,
+        })
+        .then((response) => {
+          if(response!==null){
+            return res.status(200).json({
+              success: true,
+              commandes: response,
+            });
+          }else{
+            return res.status(200).json({
+              success: false,
+              commandes:[],
+            });
+          } 
+          
+        });
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  },
+  produit_plus_vendus: async (req, res) => {
+    try {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      Model.commandeEnDetail.findAll({
+        attributes:[],
+        include: [{
+          model: Model.produitlabrairie,
+          attributes: ["titre", [Sequelize.fn('COUNT', Sequelize.col('titre')), 'total_ventes']],
+          through: { attributes: [] } ,
+          include:[{model:Model.imageProduitLibrairie , attributes:["name_Image"]}]
+        }],
+        where: {
+          createdAt: {
+            [Op.gte]: thirtyDaysAgo
+          },
+          labrairieId: req.params.id,
+        },
+        group:["id"],
+        order :["createdAt"],
+     
+      }).then((response)=>{
+        if(response!==null){
+          return res.status(200).json({
+            success: true,
+            produit: response,
+          });
+        }else{
+          return res.status(200).json({
+            success: false,
+            produit:[],
+          });
+        } 
+      })
     } catch (err) {
       return res.status(400).json({
         success: false,
