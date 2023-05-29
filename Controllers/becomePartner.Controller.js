@@ -1,3 +1,4 @@
+const { response } = require("express");
 const Model = require("../Models/index");
 const BecomePartnerController = {
   add: async (req, res) => {
@@ -17,7 +18,8 @@ const BecomePartnerController = {
             file : file , 
             links : links , 
             detail : detail, 
-            pack : pack, 
+            pack : pack,
+            etat:"en_cours",
             AdminId:AdminId
         }
         Model.BecomePartner.create(data).then((response)=>{
@@ -40,5 +42,25 @@ const BecomePartnerController = {
       });
     }
   },
+  findAll: async(req,res)=>{
+    try{
+      Model.BecomePartner.findAll({  attributes: {
+        exclude: [
+          "AdminId",
+          "updatedAt"
+        ],
+      },}).then((response)=>{
+        return res.status(200).json({
+          success:true,
+          demende : response, 
+        })
+      })
+    }catch(error){
+      res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  }
 };
 module.exports = BecomePartnerController;

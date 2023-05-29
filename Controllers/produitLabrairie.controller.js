@@ -65,13 +65,19 @@ const produitController = {
       if (prix_en_Solde !== undefined) {
         var etat = "remise";
       }
+      if(remise==0 || remise===undefined){
+        var etat = "en_Stock";
+        var prix_solde=0
+      }else{
+        var prix_solde=prix_en_Solde=0
+      }
       const produitData = {
         titre: titre,
         description: description,
         prix: prix,
         etat: etat,
         qte: qte,
-        prix_en_Solde: prix_en_Solde,
+        prix_en_Solde: prix_solde,
         remise: remise,
         categorieId: categorieId,
       };
