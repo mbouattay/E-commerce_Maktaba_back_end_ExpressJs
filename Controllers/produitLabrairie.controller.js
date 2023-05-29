@@ -53,18 +53,26 @@ const produitController = {
   },
   update: async (req, res) => {
     try {
-      const { titre,description,qte, prix,categorieId,prix_en_Solde,remise } = req.body;
-      if(prix_en_Solde!==undefined){
-        var etat ="remise"
+      const {
+        titre,
+        description,
+        qte,
+        prix,
+        categorieId,
+        prix_en_Solde,
+        remise,
+      } = req.body;
+      if (prix_en_Solde !== undefined) {
+        var etat = "remise";
       }
       const produitData = {
         titre: titre,
-        description:description,
+        description: description,
         prix: prix,
-        etat:etat,
-        qte:qte,
-        prix_en_Solde:prix_en_Solde,
-        remise:remise,
+        etat: etat,
+        qte: qte,
+        prix_en_Solde: prix_en_Solde,
+        remise: remise,
         categorieId: categorieId,
       };
       Model.produitlabrairie
@@ -79,27 +87,25 @@ const produitController = {
                   { where: { produitlabrairieId: req.params.id } }
                 )
                 .then((response) => {
-                    if(response!==0){
-                      return res.status(200).json({
-                        success: true,
-                        message: " update done ! ",
-                      });
-                    }else{
-                      return res.status(400).json({
-                        success: false,
-                        error: "error update ",
-                      });
-                    }
+                  if (response !== 0) {
+                    return res.status(200).json({
+                      success: true,
+                      message: " update done ! ",
+                    });
+                  } else {
+                    return res.status(400).json({
+                      success: false,
+                      error: "error update ",
+                    });
+                  }
                 });
-            }else{
+            } else {
               return res.status(200).json({
                 success: true,
                 message: "update done",
               });
             }
-            
           }
-          
         });
     } catch (err) {
       return res.status(400).json({
@@ -109,13 +115,13 @@ const produitController = {
     }
   },
   delete: async (req, res) => {
-    const {ids}= req.body
-    console.log (ids)
+    const { ids } = req.body;
+    console.log(ids);
     try {
       Model.produitlabrairie
         .destroy({
           where: {
-            id:ids,
+            id: ids,
           },
         })
         .then((reponse) => {
@@ -138,12 +144,7 @@ const produitController = {
       Model.produitlabrairie
         .findAll({
           attributes: {
-            exclude: [
-              "updatedAt",
-              "categorieId",
-              "labrairieId",
-              "description",
-            ],
+            exclude: ["updatedAt", "categorieId", "labrairieId", "description"],
           },
           include: [
             {
@@ -377,28 +378,43 @@ const produitController = {
       });
     }
   },
-  produit_mieux_notes : async(req,res)=>{
-    try{
-      Model.produitlabrairie.findAll({
-        attributes: ['id', 'titre'],
-        include:[{model:Model.avisProduitlibraire,attributes: [[Sequelize.fn('SUM', Sequelize.col('nbStart')), 'total_stars']]}],
-        group: ['produitlabrairie.id', 'produitlabrairie.titre'],
-        having: Sequelize.literal('SUM(nbStart) >24')
-      }).then((response)=>{
-        if(response!== null){
-          return res.status(200).json({
-              success:true,
-              produit:response,    
-          })
-        }
-      })
-    }catch(err){
+  produit_mieux_notes: async (req, res) => {
+    try {
+      Model.produitlabrairie
+        .findAll({
+          attributes: ["id", "titre"],
+          include: [
+            {
+              model: Model.avisProduitlibraire,
+              attributes: [
+                [Sequelize.fn("SUM", Sequelize.col("nbStart")), "total_stars"],
+                [Sequelize.fn("Max", Sequelize.col("nbStart")), "Max_avis"],
+              ],
+            },
+            {
+              model : Model.imageProduitLibrairie  , attributes : ["name_Image"]
+            }
+          ],
+          where: {
+            labrairieId: req.params.id,
+          },
+          group: ["produitlabrairie.id", "produitlabrairie.titre"],
+          having: Sequelize.literal("SUM(nbStart) >24"),
+        })
+        .then((response) => {
+          if (response !== null) {
+            return res.status(200).json({
+              success: true,
+              produit: response,
+            });
+          }
+        });
+    } catch (err) {
       return res.status(400).json({
         success: false,
         err: err,
       });
     }
-  }
-
+  },
 };
 module.exports = produitController;

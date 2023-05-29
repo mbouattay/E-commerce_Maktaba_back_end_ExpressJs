@@ -435,18 +435,17 @@ const commandeDetailController = {
           raw: true,
         })
         .then((response) => {
-          if(response!==null){
+          if (response !== null) {
             return res.status(200).json({
               success: true,
               commandes: response,
             });
-          }else{
+          } else {
             return res.status(200).json({
               success: false,
-              commandes:[],
+              commandes: [],
             });
-          } 
-          
+          }
         });
     } catch (err) {
       return res.status(400).json({
@@ -459,36 +458,115 @@ const commandeDetailController = {
     try {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      Model.commandeEnDetail.findAll({
-        attributes:[],
-        include: [{
-          model: Model.produitlabrairie,
-          attributes: ["titre", [Sequelize.fn('COUNT', Sequelize.col('titre')), 'total_ventes']],
-          through: { attributes: [] } ,
-          include:[{model:Model.imageProduitLibrairie , attributes:["name_Image"]}]
-        }],
-        where: {
-          createdAt: {
-            [Op.gte]: thirtyDaysAgo
+      Model.commandeEnDetail
+        .findAll({
+          attributes: [],
+          include: [
+            {
+              model: Model.produitlabrairie,
+              attributes: [
+                "titre",
+                [Sequelize.fn("COUNT", Sequelize.col("titre")), "total_ventes"],
+              ],
+              through: { attributes: [] },
+              include: [
+                {
+                  model: Model.imageProduitLibrairie,
+                  attributes: ["name_Image"],
+                },
+              ],
+            },
+          ],
+          where: {
+            createdAt: {
+              [Op.gte]: thirtyDaysAgo,
+            },
+            labrairieId: req.params.id,
           },
-          labrairieId: req.params.id,
-        },
-        group:["id"],
-        order :["createdAt"],
-     
-      }).then((response)=>{
-        if(response!==null){
-          return res.status(200).json({
-            success: true,
-            produit: response,
-          });
-        }else{
-          return res.status(200).json({
-            success: false,
-            produit:[],
-          });
-        } 
-      })
+          group: ["id"],
+          order: ["createdAt"],
+        })
+        .then((response) => {
+          if (response !== null) {
+            return res.status(200).json({
+              success: true,
+              produit: response,
+            });
+          } else {
+            return res.status(200).json({
+              success: false,
+              produit: [],
+            });
+          }
+        });
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  },
+  nb_commande: async (req, res) => {
+    try {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+      Model.commandeEnDetail
+        .findAll({
+          attributes: [
+            [Sequelize.fn("COUNT", Sequelize.col("id")), "total_commandes"],
+            [
+              Sequelize.fn(
+                "SUM",
+                Sequelize.literal(
+                  "CASE WHEN etatVender = 'Compléter' THEN 1 ELSE 0 END"
+                )
+              ),
+              "commandes_completes",
+            ],
+            [
+              Sequelize.fn(
+                "SUM",
+                Sequelize.literal(
+                  "CASE WHEN etatVender = 'En cours' THEN 1 ELSE 0 END"
+                )
+              ),
+              "commandes_en_cours",
+            ],
+            [
+              Sequelize.fn(
+                "SUM",
+                Sequelize.literal(
+                  "CASE WHEN etatVender = 'Rejeter' THEN 1 ELSE 0 END"
+                )
+              ),
+              "commandes_rejetees",
+            ],
+            [
+              Sequelize.fn(
+                "SUM",
+                Sequelize.literal(
+                  "CASE WHEN etatVender = 'Nouveau' THEN 1 ELSE 0 END"
+                )
+              ),
+              "commandes_nouvelles",
+            ],
+          ],
+          where: {
+            createdAt: {
+              [Op.gte]: thirtyDaysAgo
+            },
+            labrairieId : req.params.id
+          }
+        })
+        .then((response) => {
+          if (response !== null) {
+            return res.status(200).json({
+              success: true,
+              nb_commande: response,
+            });
+          }
+        });
     } catch (err) {
       return res.status(400).json({
         success: false,
