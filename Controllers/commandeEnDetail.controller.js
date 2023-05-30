@@ -399,10 +399,6 @@ const commandeDetailController = {
             success: true,
             message: " produit deleted",
           });
-          return res.status(400).json({
-            success: false,
-            message: " error deleted",
-          });
         }
       });
     } catch (err) {
@@ -522,7 +518,7 @@ const commandeDetailController = {
                   "CASE WHEN etatVender = 'Compléter' THEN 1 ELSE 0 END"
                 )
               ),
-              "commandes_completes",
+              "completes",
             ],
             [
               Sequelize.fn(
@@ -531,7 +527,7 @@ const commandeDetailController = {
                   "CASE WHEN etatVender = 'En cours' THEN 1 ELSE 0 END"
                 )
               ),
-              "commandes_en_cours",
+              "en_cours",
             ],
             [
               Sequelize.fn(
@@ -540,7 +536,7 @@ const commandeDetailController = {
                   "CASE WHEN etatVender = 'Rejeter' THEN 1 ELSE 0 END"
                 )
               ),
-              "commandes_rejetees",
+              "rejetees",
             ],
             [
               Sequelize.fn(
@@ -549,7 +545,7 @@ const commandeDetailController = {
                   "CASE WHEN etatVender = 'Nouveau' THEN 1 ELSE 0 END"
                 )
               ),
-              "commandes_nouvelles",
+              "nouvelles",
             ],
           ],
           where: {

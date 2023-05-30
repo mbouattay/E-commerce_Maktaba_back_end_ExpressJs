@@ -69,7 +69,7 @@ const produitController = {
         var etat = "en_Stock";
         var prix_solde=0
       }else{
-        var prix_solde=prix_en_Solde=0
+        var prix_solde=prix_en_Solde
       }
       const produitData = {
         titre: titre,
@@ -358,7 +358,7 @@ const produitController = {
       Model.produitlabrairie
         .findAll({
           where: { labrairieId: req.params.id },
-          attributes: ["id", "titre", "prix", "updatedAt", "qte"],
+          attributes: ["id", "titre", "prix", "updatedAt", "qte","remise"],
           include: [
             { model: Model.categorie, attributes: ["id", "name"] },
             { model: Model.imageProduitLibrairie, attributes: ["name_Image"] },
