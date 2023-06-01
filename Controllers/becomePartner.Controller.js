@@ -115,7 +115,7 @@ const BecomePartnerController = {
               });
             }else{
               sendMail.DemendePartenariatRejected(email)
-              return res.status(400).json({
+              return res.status(200).json({
                 success: false,
                 message: "email exist ",
               });
@@ -202,6 +202,33 @@ const BecomePartnerController = {
       });
     }
   },
+  Annuler : async (req,res)=>{
+    try {
+      Model.BecomePartner
+        .update(
+          { etat:"Annuler"},
+          { where:{id:req.params.id }}
+        )
+        .then((response) => {
+          if (response !== 0) {
+            return res.status(200).json({
+              success: true,
+              message: "demende  Annuler",
+            });
+          } else {
+            return res.status(400).json({
+              success: false,
+              message: "error",
+            });
+          }
+        });
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  }
 };
 
 module.exports = BecomePartnerController;

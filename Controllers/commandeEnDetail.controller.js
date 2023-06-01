@@ -199,6 +199,7 @@ const commandeDetailController = {
   Annuler: async (req, res) => {
     try {
       const produits= req.body.produit
+      console.log(produits)
       Model.commandeEnDetail
         .update(
           {
