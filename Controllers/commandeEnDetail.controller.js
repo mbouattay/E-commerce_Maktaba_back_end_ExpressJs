@@ -198,6 +198,7 @@ const commandeDetailController = {
   },
   Annuler: async (req, res) => {
     try {
+      const produits= req.body.produit
       Model.commandeEnDetail
         .update(
           {
@@ -208,17 +209,31 @@ const commandeDetailController = {
           { where: { id: req.params.id } }
         )
         .then((response) => {
-          if (response !== 0) {
-            return res.status(200).json({
-              success: true,
-              message: "commande Annuler",
-            });
-          } else {
-            return res.status(400).json({
-              success: false,
-              message: "error Annuler commande ",
-            });
-          }
+            if(response!==0){
+              produits?.map((e)=>{
+               Model.produitlabrairie.findOne({where:{id:e.id}}).then((response)=>{
+                  if(response!==null){
+                      const newQte=response.qte+Number(e.Qte)
+                      Model.produitlabrairie.update({qte:newQte},{where:{id:e.id}})   
+                  }else{
+                    return res.status(400).json({
+                      success: false,
+                      message: " error to find produit ",
+                    });
+                  }
+                })
+                console.log("loop")
+              })
+              return res.status(200).json({
+                success: true,
+                message: "commande Annuler",
+              });
+            } else {
+              return res.status(400).json({
+                success: false,
+                message: "error Annuler commande ",
+              });
+            }
         });
     } catch (err) {
       return res.status(400).json({

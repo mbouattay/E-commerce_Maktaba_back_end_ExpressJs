@@ -62,3 +62,18 @@ module.exports.acceptationDemendePartenariat = (email,password) => {
     })
     .catch((err) => console.log(err));
 };
+module.exports.DemendePartenariatRejected = (email) => {
+  transport
+    .sendMail({
+      from: 000,
+      to: email,
+      subject: " une demande de partenariat refuse ",
+      html: `
+      <div>
+      <h1> bienvenue chez maktba.tn </h1>
+      <p> votre email deja exist verifie votre demende </p>
+
+        </div>`,
+    })
+    .catch((err) => console.log(err));
+};
