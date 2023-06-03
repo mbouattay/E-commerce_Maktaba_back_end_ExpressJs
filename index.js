@@ -41,6 +41,7 @@ const adresses = require("./router/adresses.router")
 const produitFavorie= require("./router/produitFavorie.router")
 const adminRouter=require("./router/admin.router")
 const BecomePartner = require ("./router/becomePartner.router")
+const Cataloge=require("./router/cataloge.router")
 app.use("/user",userRouter)
 app.use("/client",clientRouter)
 app.use("/codePromo",codePromoRouter)
@@ -60,6 +61,7 @@ app.use("/adresses",adresses)
 app.use("/produitFavorie",produitFavorie)
 app.use("/admin",adminRouter)
 app.use("/BecomePartner",BecomePartner)
+app.use("/cataloge",Cataloge)
 /** end  */
 /** connection avec DB */
 db.authenticate().then(() => {

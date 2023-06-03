@@ -19,9 +19,11 @@ const avisProduitlibraireModel = require("./avisProduitlibraire")
 const signalerProduitlibraireModel = require ("./signalerProduitLibraire")
 const adressesModel = require("./adresses")
 const imageProduitLibrairieModel = require("./imageProduitLibrairie")
+const imageCatalogeModel=require("./imageCataloge")
 const produitFavorieModel = require("./produitFavorie")
 const BecomePartnerModel = require("./BecomePartner")
 const adminModel = require("./admin")
+const catalogeModel = require("./cataloge")
 const user = userModel(db, Sequelize)
 const client =  clientModel (db,Sequelize)
 const fournisseur = fournisseurModel (db, Sequelize)
@@ -41,9 +43,11 @@ const avisProduitlibraire = avisProduitlibraireModel(db,Sequelize)
 const signalerProduitlibraire = signalerProduitlibraireModel(db,Sequelize)
 const adresses  = adressesModel (db,Sequelize);
 const imageProduitLibrairie = imageProduitLibrairieModel(db,Sequelize)
+const imageCataloge=imageCatalogeModel(db,Sequelize)
 const produitFavorie = produitFavorieModel(db,Sequelize)
 const admin=adminModel(db,Sequelize)
 const BecomePartner = BecomePartnerModel(db,Sequelize)
+const cataloge=catalogeModel(db,Sequelize)
 // define relationships
 user.hasOne(client,{
   onDelete: 'CASCADE',
@@ -71,6 +75,8 @@ user.hasOne(admin,{
 })
 admin.belongsTo(user)
 labrairie.hasMany(codePromo)
+admin.hasMany(cataloge)
+cataloge.belongsTo(admin)
 codePromo.belongsTo(labrairie)
 partenaire.hasMany(codePromo)
 codePromo.belongsTo(partenaire)
@@ -113,6 +119,13 @@ produitlabrairie.hasMany(imageProduitLibrairie,{
   onUpdate: 'CASCADE'
 })
 imageProduitLibrairie.belongsTo(produitlabrairie)
+cataloge.hasMany(imageCataloge,{
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE'
+})
+imageCataloge.belongsTo(cataloge)
+categorie.hasMany(cataloge)
+cataloge.belongsTo(categorie)
 client.hasMany(produitFavorie)
 produitFavorie.belongsTo(client)
 produitlabrairie.hasMany(produitFavorie)
@@ -144,5 +157,7 @@ module.exports = {
     imageProduitLibrairie,
     produitFavorie,
     admin,
-    BecomePartner
+    BecomePartner,
+    cataloge,
+    imageCataloge
 }

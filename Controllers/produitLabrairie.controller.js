@@ -1,4 +1,3 @@
-const { response } = require("express");
 const Model = require("../Models/index");
 const { Sequelize } = require("sequelize");
 const produitController = {
@@ -21,6 +20,53 @@ const produitController = {
           image.map((e) => {
             images.push({
               name_Image: e.filename,
+              produitlabrairieId: response.id,
+            });
+          });
+          Model.imageProduitLibrairie.bulkCreate(images).then((response) => {
+            if (response !== null) {
+              return res.status(200).json({
+                success: true,
+                message: "add produit librairie Done !! ",
+              });
+            } else {
+              return res.status(400).json({
+                success: false,
+                error: err,
+              });
+            }
+          });
+        } else {
+          return res.status(400).json({
+            success: false,
+            error: err,
+          });
+        }
+      });
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  },
+  add: async (req, res) => {
+    try {
+      const { titre, description, image, prix, labrairieId, categorieId } =
+        req.body;
+      const produitData = {
+        titre: titre,
+        description: description,
+        prix: prix,
+        categorieId: categorieId,
+        labrairieId: labrairieId,
+      };
+      const images = [];
+      Model.produitlabrairie.create(produitData).then((response) => {
+        if (response !== null) {
+          image.map((e) => {
+            images.push({
+              name_Image:e.name_Image,
               produitlabrairieId: response.id,
             });
           });
