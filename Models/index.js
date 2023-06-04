@@ -24,6 +24,9 @@ const produitFavorieModel = require("./produitFavorie")
 const BecomePartnerModel = require("./BecomePartner")
 const adminModel = require("./admin")
 const catalogeModel = require("./cataloge")
+const suggestionProduitModel=require("./suggestionProduit")
+const SouscategorieModel = require("./sousCategorie")
+const sousCategorie = require("./sousCategorie")
 const user = userModel(db, Sequelize)
 const client =  clientModel (db,Sequelize)
 const fournisseur = fournisseurModel (db, Sequelize)
@@ -48,6 +51,8 @@ const produitFavorie = produitFavorieModel(db,Sequelize)
 const admin=adminModel(db,Sequelize)
 const BecomePartner = BecomePartnerModel(db,Sequelize)
 const cataloge=catalogeModel(db,Sequelize)
+const suggestionProduit = suggestionProduitModel(db,Sequelize)
+const Souscategorie = SouscategorieModel(db,Sequelize)
 // define relationships
 user.hasOne(client,{
   onDelete: 'CASCADE',
@@ -132,7 +137,17 @@ produitlabrairie.hasMany(produitFavorie)
 produitFavorie.belongsTo(produitlabrairie)
 admin.hasMany(BecomePartner)
 BecomePartner.belongsTo(admin)
-db.sync({force:false}).then(() => {
+user.hasMany(suggestionProduit)
+suggestionProduit.belongsTo(user)
+categorie.hasMany(Souscategorie)
+Souscategorie.belongsTo(categorie)
+Souscategorie.hasMany(suggestionProduit)
+suggestionProduit.belongsTo(Souscategorie)
+categorie.hasMany(suggestionProduit)
+suggestionProduit.belongsTo(categorie)
+Souscategorie.hasMany(produitlabrairie)
+produitlabrairie.belongsTo(Souscategorie)
+db.sync({force:true}).then(() => {
     console.log("Tables Created!")
 })
 module.exports = {
@@ -159,5 +174,7 @@ module.exports = {
     admin,
     BecomePartner,
     cataloge,
-    imageCataloge
+    imageCataloge,
+    suggestionProduit,
+    Souscategorie
 }

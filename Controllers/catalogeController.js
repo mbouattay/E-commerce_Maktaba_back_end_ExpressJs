@@ -4,13 +4,13 @@ const CatalogeController = {
   add: async (req, res) => {
     try {
       req.body["image"] = req.files;
-      const { titre, description, prix, image, AdminId, categorieId } =
+      const { titre, description, prix, image,etat, AdminId, categorieId } =
         req.body;
       const data = {
         titre: titre,
         description: description,
         prix: prix,
-        etat: "visible",
+        etat: etat,
         AdminId: AdminId,
         categorieId: categorieId,
       };
@@ -170,11 +170,13 @@ const CatalogeController = {
         titre : titre,
         description : description , 
         prix : prix , 
-        image : image ,
         categorieId : categorieId ,
       }
       Model.cataloge.update(data,{where:{id:req.params.id}}).then((response)=>{
           if(response!=0){
+            image.map((e)=>{
+              Model
+            })
             return res.status(200).json({
               success: true,
               message: "   update Done",

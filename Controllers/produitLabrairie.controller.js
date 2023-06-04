@@ -4,7 +4,7 @@ const produitController = {
   add_produit_with_import_image: async (req, res) => {
     try {
       req.body["image"] = req.files;
-      const { titre, description, image, qte, prix, labrairieId, categorieId } =
+      const { titre, description, image, qte, prix, labrairieId, categorieId,SouscategorieId } =
         req.body;
       const produitData = {
         titre: titre,
@@ -13,6 +13,7 @@ const produitController = {
         qte: qte,
         categorieId: categorieId,
         labrairieId: labrairieId,
+        SouscategorieId:SouscategorieId,
       };
       const images = [];
       Model.produitlabrairie.create(produitData).then((response) => {
@@ -52,7 +53,7 @@ const produitController = {
   },
   add: async (req, res) => {
     try {
-      const { titre, description, image, prix, labrairieId, categorieId } =
+      const { titre, description, image, prix, labrairieId, categorieId,SouscategorieId } =
         req.body;
       const produitData = {
         titre: titre,
@@ -60,6 +61,7 @@ const produitController = {
         prix: prix,
         categorieId: categorieId,
         labrairieId: labrairieId,
+        SouscategorieId:SouscategorieId
       };
       const images = [];
       Model.produitlabrairie.create(produitData).then((response) => {
@@ -105,6 +107,7 @@ const produitController = {
         qte,
         prix,
         categorieId,
+        SouscategorieId,
         prix_en_Solde,
         remise,
       } = req.body;
@@ -126,6 +129,7 @@ const produitController = {
         prix_en_Solde: prix_solde,
         remise: remise,
         categorieId: categorieId,
+        SouscategorieId:SouscategorieId,
       };
       Model.produitlabrairie
         .update(produitData, { where: { id: req.params.id } })
