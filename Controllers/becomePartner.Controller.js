@@ -84,6 +84,10 @@ const BecomePartnerController = {
       for (let i = 0; i < 25; i++) {
         Password += characters[Math.floor(Math.random() * characters.length)];
       }
+      Model.BecomePartner.update(
+        { etat:"accepte"},
+        { where:{id:req.params.id}}
+      )
       const passwordHash = bcrypt.hashSync(Password, 10);
       switch (Role) {
         case "Librairie":

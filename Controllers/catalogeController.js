@@ -58,7 +58,7 @@ const CatalogeController = {
             exclude: ["updatedAt", "AdminId","categorieId"],
           },
           include: [
-            { model: Model.imageCataloge, attributes: ["name_Image"] },
+            { model: Model.imageCataloge, attributes: ["id","name_Image"]},
             { model: Model.categorie, attributes: ["id", "name"] },
           ],
         })
@@ -136,6 +136,61 @@ const CatalogeController = {
             success: false,
             error: err,
           });
+    }
+  },
+  changeVisibilite : async(req,res)=>{
+    try{
+      Model.cataloge.update({etat:req.body.etat},{where:{id:req.params.id}}).then((response)=>{
+        if(response!==0){
+          return res.status(200).json({
+            success: true,
+            message: "  change etat produi tDone",
+          });
+        }else{
+          return res.status(200).json({
+            success: false,
+            message : "error to change etat "
+          });
+        }
+      })
+    }catch(err){
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  },
+  update :async(req,res)=>{
+    try{
+      if(req.image!==undefined){
+        req.body["image"] = req.files;
+      }
+      const { titre, description, prix, image,categorieId } = req.body;
+      const data = {
+        titre : titre,
+        description : description , 
+        prix : prix , 
+        image : image ,
+        categorieId : categorieId ,
+      }
+      Model.cataloge.update(data,{where:{id:req.params.id}}).then((response)=>{
+          if(response!=0){
+            return res.status(200).json({
+              success: true,
+              message: "   update Done",
+            });
+          }else{
+            return res.status(200).json({
+              success: true,
+              message: "error to update produit",
+            });
+          }
+      })
+    }catch(err){
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
     }
   }
 };
