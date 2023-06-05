@@ -147,7 +147,7 @@ categorie.hasMany(suggestionProduit)
 suggestionProduit.belongsTo(categorie)
 Souscategorie.hasMany(produitlabrairie)
 produitlabrairie.belongsTo(Souscategorie)
-db.sync({force:true}).then(() => {
+db.sync({force:false}).then(() => {
     console.log("Tables Created!")
 })
 module.exports = {

@@ -4,7 +4,7 @@ const CatalogeController = {
   add: async (req, res) => {
     try {
       req.body["image"] = req.files;
-      const { titre, description, prix, image,etat, AdminId, categorieId } =
+      const { titre, description, prix, image,etat, AdminId, categorieId,SouscategorieId} =
         req.body;
       const data = {
         titre: titre,
@@ -13,6 +13,7 @@ const CatalogeController = {
         etat: etat,
         AdminId: AdminId,
         categorieId: categorieId,
+        SouscategorieId:SouscategorieId
       };
       const images = [];
       Model.cataloge.create(data).then((response) => {
@@ -90,6 +91,7 @@ const CatalogeController = {
           include: [
             { model: Model.imageCataloge, attributes: ["id","name_Image"] },
             { model: Model.categorie, attributes: ["id", "name"] },
+            { model: Model.Souscategorie, attributes: ["id", "name"] },
           ],
         })
         .then((response) => {
