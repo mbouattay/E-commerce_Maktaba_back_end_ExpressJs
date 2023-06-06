@@ -87,6 +87,28 @@ const SousCategorieController = {
       });
     }
   },
+  findByCategorie : async(req,res)=>{
+    try{
+      Model.Souscategorie.findAll({where:{categorieId:req.params.id}}).then((response)=>{
+        if(response!==null){
+         return res.status(200).json({
+            success: true,
+            categorie: response,
+          });
+        }else{
+          return res.status(200).json({
+            success: false,
+            categorie: [],
+          });
+        }
+      })
+    }catch(error){
+      return res.status(400).json({
+        success: false,
+        error: err,
+      });
+    }
+  }
 
 };
 module.exports = SousCategorieController;
