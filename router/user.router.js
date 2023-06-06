@@ -15,4 +15,5 @@ router.put("/updateIdentite/:id",upload.array("image",1),userController.updateId
 router.put("/addPoint/:id",userController.addPoint)
 router.put ("/bloque/:id",userController.bloque)
 router.get("/findAll",userController.findAlluser)
+router.delete("/delete/:id",userController.delete)
 module.exports = router;

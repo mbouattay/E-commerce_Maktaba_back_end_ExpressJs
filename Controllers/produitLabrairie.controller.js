@@ -102,12 +102,8 @@ const produitController = {
   update: async (req, res) => {
     try {
       const {
-        titre,
-        description,
         qte,
         prix,
-        categorieId,
-        SouscategorieId,
         prix_en_Solde,
         remise,
       } = req.body;
@@ -121,16 +117,14 @@ const produitController = {
         var prix_solde=prix_en_Solde
       }
       const produitData = {
-        titre: titre,
-        description: description,
         prix: prix,
         etat: etat,
         qte: qte,
         prix_en_Solde: prix_solde,
         remise: remise,
-        categorieId: categorieId,
-        SouscategorieId:SouscategorieId,
+
       };
+      console.log(produitData)
       Model.produitlabrairie
         .update(produitData, { where: { id: req.params.id } })
         .then((response) => {

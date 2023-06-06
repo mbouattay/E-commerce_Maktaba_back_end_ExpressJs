@@ -28,7 +28,8 @@ const userController = {
                     id: User.id,
                     fullname:User.fullname,
                     role :User.role ,
-                    avatar :User.avatar
+                    avatar :User.avatar,
+                    etatCompte:User.etatCompte
                   },
                   process.env.PRIVATE_KEY,
                   { expiresIn: "1h" }
@@ -38,7 +39,8 @@ const userController = {
                     id: User.id,
                     fullname:User.fullname,
                     role : User.role,
-                    avatar :User.avatar
+                    avatar :User.avatar,
+                    etatCompte:User.etatCompte
                   },
                   process.env.REFRESH_KEY,
                   { expiresIn: "30d" }
@@ -287,7 +289,8 @@ const userController = {
                 id: user.id,
                 fullname: user.fullname,
                 role: user.role,
-                avatar :user.avatar
+                avatar :user.avatar,
+                etatCompte:user.etatCompte
               },
               process.env.PRIVATE_KEY,
               { expiresIn: "1h" }
@@ -297,7 +300,8 @@ const userController = {
                 id: user.id,
                 fullname:user.fullname,
                 role: user.role,
-                avatar :user.avatar
+                avatar :user.avatar,
+                etatCompte:user.etatCompte
               },
               process.env.REFRESH_KEY,
               { expiresIn: "30d" }
@@ -339,6 +343,7 @@ const userController = {
                         id: user.id,
                         fullname:fullname,
                         role: user.role,
+                        etatCompte:user.etatCompte
                       
                       },
                       process.env.PRIVATE_KEY,
@@ -349,6 +354,8 @@ const userController = {
                         id: user.id,
                         fullname:fullname,
                         role: user.role,
+                        etatCompte:user.etatCompte
+                        
                       },
                       process.env.REFRESH_KEY,
                       { expiresIn: "30d" }
@@ -500,7 +507,7 @@ const userController = {
   },
   findAlluser : async(req,res)=>{
     try{
-      Model.user.findAll({attributes:["id","fullname","avatar","telephone","createdAt","etatCompte"]}).then((response)=>{
+      Model.user.findAll({attributes:["id","fullname","email","avatar","role","telephone","createdAt","etatCompte"]}).then((response)=>{
         try{
             if(response!==null){
               return res.status(200).json({
@@ -521,6 +528,32 @@ const userController = {
         }
       })
     }catch(err){
+      return res.status(400).json({
+        success: false,
+        error:err,
+      });
+    }
+  },
+  delete : async(req,res)=>{
+    try{
+      Model.user.destroy({
+        where: {
+          id: req.params.id,
+        },
+      }).then((response)=>{
+          if(response!==0){
+            return res.status(200).json({
+              success:true , 
+              message: "user deleted" 
+            })
+          }else{
+            return res.status(400).json({
+              success:false , 
+              message: "error to delete user" 
+            })
+          }
+      })
+    }catch(error){
       return res.status(400).json({
         success: false,
         error:err,

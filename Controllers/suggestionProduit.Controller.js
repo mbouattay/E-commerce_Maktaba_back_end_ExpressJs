@@ -36,7 +36,7 @@ const suggestionProduitController = {
   },
   find: async (req, res) => {
     try {
-      await Model.suggestionProduit.findAll({include:[{model:Model.imageCataloge},{model:Model.user},{model:Model.Souscategorie}]}).then((suggestionProduit) => {
+      await Model.suggestionProduit.findAll({include:[Model.Souscategorie,Model.categorie,Model.user]}).then((suggestionProduit) => {
         if(suggestionProduit!==null){
            return  res.status(200).json({
                 success: true,
