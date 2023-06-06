@@ -10,5 +10,6 @@ module.exports = (db, DataTypes) => {
     Date_de_naissance : {type : DataTypes.DATEONLY},
     telephone : {type : DataTypes.INTEGER},
     point :{type : DataTypes.INTEGER},
+    etatCompte:{type :DataTypes.STRING}
   });
 }

@@ -60,7 +60,7 @@ const CatalogeController = {
           },
           include: [
             { model: Model.imageCataloge, attributes: ["id","name_Image"]},
-            { model: Model.categorie, attributes: ["id", "name"] },
+            { model: Model.categorie, attributes: ["id", "name"]},
           ],
         })
         .then((response) => {
@@ -167,18 +167,16 @@ const CatalogeController = {
       if(req.image!==undefined){
         req.body["image"] = req.files;
       }
-      const { titre, description, prix, image,categorieId } = req.body;
+      const { titre, description, prix, image,categorieId,SouscategorieId } = req.body;
       const data = {
         titre : titre,
         description : description , 
         prix : prix , 
         categorieId : categorieId ,
+        SouscategorieId:SouscategorieId
       }
       Model.cataloge.update(data,{where:{id:req.params.id}}).then((response)=>{
           if(response!=0){
-            image.map((e)=>{
-              Model
-            })
             return res.status(200).json({
               success: true,
               message: "   update Done",

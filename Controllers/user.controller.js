@@ -82,7 +82,8 @@ const userController = {
             email: req.body.email,
             password: passwordHash,
             email_verifie: "non_verifie",
-            role : "client"
+            role : "client",
+            etatCompte:"active"
           };
           Model.user.create(datauser).then((user) => {
             if (user !== null) {
@@ -323,6 +324,7 @@ const userController = {
               password: passwordHash,
               email_verifie: "verifie",
               role: "client",
+              etatCompte:"active"
             };
             Model.user.create(datauser).then((user) => {
               if (user !== null) {
@@ -471,6 +473,57 @@ const userController = {
       return res.status(400).json({
         success: false,
         error: err,
+      });
+    }
+  },
+  bloque : async(req,res)=>{
+    try{
+      Model.user.update({etatCompte:"bloque"},{where : {id:req.params.id}}).then((response)=>{
+        if(response!==0){
+          return res.status(200).json({
+            success : true,
+            message :"blocage done !!!"
+          })
+        }else{
+          return res.status(400).json({
+            success : false,
+            message :"error"
+          })
+        }
+      })
+    }catch(err){
+      return res.status(400).json({
+        success: false,
+        error:err,
+      });
+    }
+  },
+  findAlluser : async(req,res)=>{
+    try{
+      Model.user.findAll({attributes:["id","fullname","avatar","telephone","createdAt","etatCompte"]}).then((response)=>{
+        try{
+            if(response!==null){
+              return res.status(200).json({
+                success : true , 
+                users: response,
+              })
+            }else{
+              return res.status(200).json({
+                success : true , 
+                users: [],
+              })
+            }
+        }catch(err){
+          return res.status(400).json({
+            success: false,
+            error:err,
+          });
+        }
+      })
+    }catch(err){
+      return res.status(400).json({
+        success: false,
+        error:err,
       });
     }
   }

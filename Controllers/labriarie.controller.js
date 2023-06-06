@@ -51,7 +51,11 @@ const LabriarieController = {
   },
   updateProfile: async (req, res) => {
     try {
-      req.body["image"] = req.files[0].filename;
+      if(req.files.length!==0){
+        req.body["image"] = req.files[0].filename;
+      }else{
+        req.body["image"]==null
+      }
       const {adresse,ville,nameLibrairie,telephone,facebook,instagram,image,emailLib}=req.body
       const data = {
         adresse :adresse,

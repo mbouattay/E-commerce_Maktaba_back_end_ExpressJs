@@ -13,4 +13,6 @@ router.post("/loginsocial", userController.authWithSocialMedia)
 router.put ("/updatePassword/:id",userController.updatePassword)
 router.put("/updateIdentite/:id",upload.array("image",1),userController.updateIdentite)
 router.put("/addPoint/:id",userController.addPoint)
+router.put ("/bloque/:id",userController.bloque)
+router.get("/findAll",userController.findAlluser)
 module.exports = router;

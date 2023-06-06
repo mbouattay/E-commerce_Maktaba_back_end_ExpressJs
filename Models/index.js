@@ -26,7 +26,6 @@ const adminModel = require("./admin")
 const catalogeModel = require("./cataloge")
 const suggestionProduitModel=require("./suggestionProduit")
 const SouscategorieModel = require("./sousCategorie")
-const sousCategorie = require("./sousCategorie")
 const user = userModel(db, Sequelize)
 const client =  clientModel (db,Sequelize)
 const fournisseur = fournisseurModel (db, Sequelize)
@@ -147,7 +146,9 @@ categorie.hasMany(suggestionProduit)
 suggestionProduit.belongsTo(categorie)
 Souscategorie.hasMany(produitlabrairie)
 produitlabrairie.belongsTo(Souscategorie)
-db.sync({force:false}).then(() => {
+Souscategorie.hasMany(cataloge)
+cataloge.belongsTo(Souscategorie)
+db.sync({force:true}).then(() => {
     console.log("Tables Created!")
 })
 module.exports = {
