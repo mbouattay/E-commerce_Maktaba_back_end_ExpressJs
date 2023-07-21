@@ -205,4 +205,5 @@ const bonAchatController = {
     }
   },
 };
+
 module.exports = bonAchatController;
