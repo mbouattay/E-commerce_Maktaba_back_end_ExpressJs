@@ -116,7 +116,7 @@ const commandeDetailController = {
           include: [
             {
               model: Model.produitlabrairie,
-              attributes: ["titre", "description", "prix"],
+              attributes: ["titre", "description", "prix","prix_en_Solde"],
               include: [
                 {
                   model: Model.imageProduitLibrairie,

@@ -53,12 +53,13 @@ const produitController = {
   },
   add: async (req, res) => {
     try {
-      const { titre, description, image, prix, labrairieId, categorieId,SouscategorieId } =
+      const { titre, description, image, prix, labrairieId, categorieId,SouscategorieId,qte } =
         req.body;
       const produitData = {
         titre: titre,
         description: description,
         prix: prix,
+        qte: qte,
         categorieId: categorieId,
         labrairieId: labrairieId,
         SouscategorieId:SouscategorieId

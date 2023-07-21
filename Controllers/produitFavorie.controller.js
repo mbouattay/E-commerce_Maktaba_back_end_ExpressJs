@@ -3,9 +3,9 @@ const Model = require("../Models/index");
 const produitFavorieController = {
   add: async (req, res) => {
     try {
-      const { clientId, produitlabrairieId } = req.body;
+      const { userId, produitlabrairieId } = req.body;
       const data = {
-        clientId: clientId,
+        userId: userId,
         produitlabrairieId: produitlabrairieId,
       };
       Model.produitFavorie.findOne({where:{produitlabrairieId:produitlabrairieId}}).then((response)=>{
@@ -42,7 +42,7 @@ const produitFavorieController = {
     try {
       Model.produitFavorie
         .destroy({
-          where: { id: req.params.id, clientId: req.params.clientId },
+          where: { id: req.params.id, userId: req.params.userId },
         })
         .then((response) => {
           if (response !== 0) {
@@ -68,7 +68,7 @@ const produitFavorieController = {
     try {
       Model.produitFavorie
         .findAll({
-          where: { clientId: req.params.clientId },
+          where: { userId: req.params.userId },
           attributes: ["id"],
           include: [
             {

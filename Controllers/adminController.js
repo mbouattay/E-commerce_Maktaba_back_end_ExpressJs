@@ -9,6 +9,7 @@ const adminController = {
             email: req.body.email,
             password: passwordHash,
             email_verifie: "verifie",
+            etatCompte:"active",
             role : "Admin"
           };
           Model.user.create(datauser).then((user) => {

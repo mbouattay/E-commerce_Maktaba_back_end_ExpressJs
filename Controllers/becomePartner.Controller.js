@@ -97,6 +97,7 @@ const BecomePartnerController = {
             password: passwordHash,
             email_verifie: "verifie",
             role: "labrairie",
+            etatCompte:"active",
           };
           Model.user.findOne({where:{email:email}}).then((response)=>{
             if(response===null){

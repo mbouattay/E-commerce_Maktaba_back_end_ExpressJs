@@ -130,8 +130,8 @@ cataloge.hasMany(imageCataloge,{
 imageCataloge.belongsTo(cataloge)
 categorie.hasMany(cataloge)
 cataloge.belongsTo(categorie)
-client.hasMany(produitFavorie)
-produitFavorie.belongsTo(client)
+user.hasMany(produitFavorie)
+produitFavorie.belongsTo(user)
 produitlabrairie.hasMany(produitFavorie)
 produitFavorie.belongsTo(produitlabrairie)
 admin.hasMany(BecomePartner)
@@ -148,7 +148,7 @@ Souscategorie.hasMany(produitlabrairie)
 produitlabrairie.belongsTo(Souscategorie)
 Souscategorie.hasMany(cataloge)
 cataloge.belongsTo(Souscategorie)
-db.sync({force:false}).then(() => {
+db.sync({force:true}).then(() => {
     console.log("Tables Created!")
 })
 module.exports = {
